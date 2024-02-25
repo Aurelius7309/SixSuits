@@ -163,7 +163,7 @@ function SMODS.INIT.SixSuit()
     local planets = {
         c_gj_273_c = {
             order = 13,
-            discovered = true,
+            discovered = false,
             cost = 3,
             consumeable = true,
             freq = 1,
@@ -176,7 +176,7 @@ function SMODS.INIT.SixSuit()
         },
         c_trappist = {
             order = 14,
-            discovered = true,
+            discovered = false,
             cost = 3,
             consumeable = true,
             freq = 1,
@@ -189,7 +189,7 @@ function SMODS.INIT.SixSuit()
         },
         c_kepler = {
             order = 15,
-            discovered = true,
+            discovered = false,
             cost = 3,
             consumeable = true,
             freq = 1,
@@ -202,7 +202,7 @@ function SMODS.INIT.SixSuit()
         },
         c_proxima = {
             order = 16,
-            discovered = true,
+            discovered = false,
             cost = 3,
             consumeable = true,
             freq = 1,
@@ -261,36 +261,47 @@ function SMODS.INIT.SixSuit()
 
     table.sort(G.P_CENTER_POOLS['Planet'], function(a, b) return a.order < b.order end)
     table.sort(G.P_CENTER_POOLS['Tarot'], function(a, b) return a.order < b.order end)
-        -------------------------------------
-        local TESTHELPER_unlocks = false and not _RELEASE_MODE
-        -------------------------------------
-        if not love.filesystem.getInfo(G.SETTINGS.profile..'') then love.filesystem.createDirectory( G.SETTINGS.profile..'' ) end
-        if not love.filesystem.getInfo(G.SETTINGS.profile..'/'..'meta.jkr') then love.filesystem.append( G.SETTINGS.profile..'/'..'meta.jkr', 'return {}') end
-    
-        convert_save_to_meta()
-    
-        local meta = STR_UNPACK(get_compressed(G.SETTINGS.profile..'/'..'meta.jkr') or 'return {}')
-        meta.unlocked = meta.unlocked or {}
-        meta.discovered = meta.discovered or {}
-        meta.alerted = meta.alerted or {}
-        
-        for k, v in pairs(G.P_CENTERS) do
-            if not v.wip and not v.demo then 
-                if TESTHELPER_unlocks then v.unlocked = true; v.discovered = true;v.alerted = true end --REMOVE THIS
-                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) and meta.unlocked[k] then 
-                    v.unlocked = true
-                end
-                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) then G.P_LOCKED[#G.P_LOCKED+1] = v end
-                if not v.discovered and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^e_') or string.find(k, '^c_') or string.find(k, '^p_') or string.find(k, '^v_')) and meta.discovered[k] then 
-                    v.discovered = true
-                end
-                if v.discovered and meta.alerted[k] or v.set == 'Back' or v.start_alerted then 
-                    v.alerted = true
-                elseif v.discovered then
-                    v.alerted = false
-                end
+    -------------------------------------
+    local TESTHELPER_unlocks = false and not _RELEASE_MODE
+    -------------------------------------
+    if not love.filesystem.getInfo(G.SETTINGS.profile .. '') then
+        love.filesystem.createDirectory(G.SETTINGS.profile ..
+            '')
+    end
+    if not love.filesystem.getInfo(G.SETTINGS.profile .. '/' .. 'meta.jkr') then
+        love.filesystem.append(
+            G.SETTINGS.profile .. '/' .. 'meta.jkr', 'return {}')
+    end
+
+    convert_save_to_meta()
+
+    local meta = STR_UNPACK(get_compressed(G.SETTINGS.profile .. '/' .. 'meta.jkr') or 'return {}')
+    meta.unlocked = meta.unlocked or {}
+    meta.discovered = meta.discovered or {}
+    meta.alerted = meta.alerted or {}
+
+    for k, v in pairs(G.P_CENTERS) do
+        if not v.wip and not v.demo then
+            if TESTHELPER_unlocks then
+                v.unlocked = true; v.discovered = true; v.alerted = true
+            end --REMOVE THIS
+            if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) and meta.unlocked[k] then
+                v.unlocked = true
+            end
+            if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) then
+                G.P_LOCKED[#G.P_LOCKED + 1] =
+                    v
+            end
+            if not v.discovered and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^e_') or string.find(k, '^c_') or string.find(k, '^p_') or string.find(k, '^v_')) and meta.discovered[k] then
+                v.discovered = true
+            end
+            if v.discovered and meta.alerted[k] or v.set == 'Back' or v.start_alerted then
+                v.alerted = true
+            elseif v.discovered then
+                v.alerted = false
             end
         end
+    end
 
     function get_starting_params()
         return {
@@ -370,6 +381,7 @@ function SMODS.INIT.SixSuit()
             ["Stars"] = 0,
             ["Moons"] = 0
         }
+        if #hand < 5 or #hand > 5 then return {} end
         for i = 1, #hand do
             if hand[i].ability.name ~= 'Wild Card' then
                 for k, v in pairs(suits) do
@@ -609,9 +621,18 @@ function SMODS.INIT.SixSuit()
                     n = G.UIT.R,
                     config = { align = "cm" },
                     nodes = {
-                        create_option_cycle({ options = tarot_options, w = 4.5, cycle_shoulders = true, opt_callback =
-                        'your_collection_tarot_page', focus_args = { snap_to = true, nav = 'wide' }, current_option = 1, colour =
-                        G.C.RED, no_pips = true })
+                        create_option_cycle({
+                            options = tarot_options,
+                            w = 4.5,
+                            cycle_shoulders = true,
+                            opt_callback =
+                            'your_collection_tarot_page',
+                            focus_args = { snap_to = true, nav = 'wide' },
+                            current_option = 1,
+                            colour =
+                                G.C.RED,
+                            no_pips = true
+                        })
                     }
                 }
             }
