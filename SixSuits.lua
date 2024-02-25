@@ -6,17 +6,18 @@
 
 ----------------------------------------------
 ------------MOD CODE -------------------------
-
 function SMODS.INIT.SixSuit()
     local six_suit_mod = SMODS.findModByID('SixSuits')
     local sprite_cards_1 = SMODS.Sprite:new('cards_1', six_suit_mod.path, '8BitDeck.png', 71, 95, 'asset_atli')
     local sprite_cards_2 = SMODS.Sprite:new('cards_2', six_suit_mod.path, '8BitDeck_opt2.png', 71, 95, 'asset_atli')
     local sprite_ui_1 = SMODS.Sprite:new('ui_1', six_suit_mod.path, 'ui_assets.png', 18, 18, 'asset_atli')
     local sprite_ui_2 = SMODS.Sprite:new('ui_2', six_suit_mod.path, 'ui_assets_opt2.png', 18, 18, 'asset_atli')
+    local sprite_tarot = SMODS.Sprite:new('Tarot', six_suit_mod.path, 'Tarots.png', 71, 95, 'asset_atli')
     sprite_cards_1:register()
     sprite_cards_2:register()
     sprite_ui_1:register()
     sprite_ui_2:register()
+    sprite_tarot:register()
     G.C.SUITS.Stars = HEX('DF509F')
     G.C.SO_1.Stars = HEX('DF509F')
     G.C.SO_2.Stars = HEX('DF509F')
@@ -27,8 +28,50 @@ function SMODS.INIT.SixSuit()
     G.localization.misc['suits_plural']['Moons'] = 'Moons'
     G.localization.misc['suits_singular']['Stars'] = 'Star'
     G.localization.misc['suits_singular']['Moons'] = 'Moon'
+    G.localization.misc['poker_hands']['Spectrum'] = 'Spectrum'
+    G.localization.misc['poker_hands']['Straight Spectrum'] = 'Straight Spectrum'
+    G.localization.misc['poker_hands']['Royal Spectrum'] = 'Royal Spectrum'
+    G.localization.misc['poker_hands']['Spectrum House'] = 'Spectrum House'
+    G.localization.misc['poker_hands']['Spectrum Five'] = 'Spectrum Five'
+    G.localization.misc['poker_hand_descriptions']['Spectrum'] = {
+        [1] = '5 cards, each with a different suit'
+    }
+    G.localization.misc['poker_hand_descriptions']['Straight Spectrum'] = {
+        [1] = '5 cards in a row (consecutive ranks) with',
+        [2] = 'each card having a different suit'
+    }
+    G.localization.misc['poker_hand_descriptions']['Royal Spectrum'] = {
+        [1] = '5 cards in a row (consecutive ranks) with',
+        [2] = 'each card having a different suit'
+    }
+    G.localization.misc['poker_hand_descriptions']['Spectrum House'] = {
+        [1] = 'A Three of a Kind and a Pair with',
+        [2] = 'each card having a different suit'
+    }
+    G.localization.misc['poker_hand_descriptions']['Spectrum Five'] = {
+        [1] = '5 cards with the same rank,',
+        [2] = 'each with a different suit'
+    }
     G.six_suits = false
-    for k,v in pairs(G.CHALLENGES) do
+    G.handlist = {
+        "Flush Five",
+        "Flush House",
+        "Spectrum Five",
+        "Five of a Kind",
+        "Spectrum House",
+        "Straight Flush",
+        "Straight Spectrum",
+        "Four of a Kind",
+        "Full House",
+        "Flush",
+        "Spectrum",
+        "Straight",
+        "Three of a Kind",
+        "Two Pair",
+        "Pair",
+        "High Card",
+    }
+    for k, v in pairs(G.CHALLENGES) do
         v = v or {}
         v.deck = v.deck or {}
         v.deck.no_suits = v.deck.no_suits or {}
@@ -117,6 +160,138 @@ function SMODS.INIT.SixSuit()
         M_A = { name = "Ace of Moons", value = 'Ace', suit = 'Moons', pos = { x = 12, y = 5 } }
     }
 
+    local planets = {
+        c_gj_273_c = {
+            order = 13,
+            discovered = true,
+            cost = 3,
+            consumeable = true,
+            freq = 1,
+            name = 'GJ 273 c',
+            pos = { x = 0, y = 6 },
+            set = 'Planet',
+            effect = 'Hand Upgrade',
+            cost_mult = 1.0,
+            config = { hand_type = 'Spectrum' }
+        },
+        c_trappist = {
+            order = 14,
+            discovered = true,
+            cost = 3,
+            consumeable = true,
+            freq = 1,
+            name = 'Trappist',
+            pos = { x = 1, y = 6 },
+            set = 'Planet',
+            effect = 'Hand Upgrade',
+            cost_mult = 1.0,
+            config = { hand_type = 'Straight Spectrum' }
+        },
+        c_kepler = {
+            order = 15,
+            discovered = true,
+            cost = 3,
+            consumeable = true,
+            freq = 1,
+            name = 'Kepler',
+            pos = { x = 2, y = 6 },
+            set = 'Planet',
+            effect = 'Hand Upgrade',
+            cost_mult = 1.0,
+            config = { hand_type = 'Spectrum House', softlock = true }
+        },
+        c_proxima = {
+            order = 16,
+            discovered = true,
+            cost = 3,
+            consumeable = true,
+            freq = 1,
+            name = 'Proxima',
+            pos = { x = 3, y = 6 },
+            set = 'Planet',
+            effect = 'Hand Upgrade',
+            cost_mult = 1.0,
+            config = { hand_type = 'Spectrum Five', softlock = true }
+        }
+    }
+    local tarots = {
+        c_inv_star = { order = 23, discovered = true, cost = 3, consumeable = true, name = "The Star", pos = { x = 2, y = 7 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Stars', max_highlighted = 3 } },
+        c_inv_moon = { order = 24, discovered = true, cost = 3, consumeable = true, name = "The Moon", pos = { x = 1, y = 7 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Moons', max_highlighted = 3 } },
+    }
+    local planet_loc_text = {
+        [1] = '{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up',
+        [2] = '{C:attention}#2#',
+        [3] = '{C:mult}+#3#{} Mult and',
+        [4] = '{C:chips}+#4#{} chips',
+    }
+    local planet_loc = {}
+    local tarot_loc = {
+        c_inv_star = {
+            name = "The Star",
+            text = {
+                [1] = 'Converts up to',
+                [2] = '{C:attention}#1#{} selected cards',
+                [3] = 'to {V:1}#2#{}',
+            }
+        },
+        c_inv_moon = {
+            name = "The Moon",
+            text = {
+                [1] = 'Converts up to',
+                [2] = '{C:attention}#1#{} selected cards',
+                [3] = 'to {V:1}#2#{}',
+            }
+        }
+    }
+    for k, v in pairs(planets) do
+        v.key = k
+        --v.order = table_length(G.P_CENTER_POOLS['Planet']) + 1
+        G.P_CENTERS[k] = v
+        table.insert(G.P_CENTER_POOLS['Planet'], v)
+        planet_loc[k] = { name = v.name, text = planet_loc_text }
+        G.localization.descriptions.Planet[k] = planet_loc[k]
+    end
+    for k, v in pairs(tarots) do
+        v.key = k
+        --v.order = table_length(G.P_CENTER_POOLS['Tarot']) + 1
+        G.P_CENTERS[k] = v
+        table.insert(G.P_CENTER_POOLS['Tarot'], v)
+        G.localization.descriptions.Tarot[k] = tarot_loc[k]
+    end
+
+    table.sort(G.P_CENTER_POOLS['Planet'], function(a, b) return a.order < b.order end)
+    table.sort(G.P_CENTER_POOLS['Tarot'], function(a, b) return a.order < b.order end)
+        -------------------------------------
+        local TESTHELPER_unlocks = false and not _RELEASE_MODE
+        -------------------------------------
+        if not love.filesystem.getInfo(G.SETTINGS.profile..'') then love.filesystem.createDirectory( G.SETTINGS.profile..'' ) end
+        if not love.filesystem.getInfo(G.SETTINGS.profile..'/'..'meta.jkr') then love.filesystem.append( G.SETTINGS.profile..'/'..'meta.jkr', 'return {}') end
+    
+        convert_save_to_meta()
+    
+        local meta = STR_UNPACK(get_compressed(G.SETTINGS.profile..'/'..'meta.jkr') or 'return {}')
+        meta.unlocked = meta.unlocked or {}
+        meta.discovered = meta.discovered or {}
+        meta.alerted = meta.alerted or {}
+        
+        for k, v in pairs(G.P_CENTERS) do
+            if not v.wip and not v.demo then 
+                if TESTHELPER_unlocks then v.unlocked = true; v.discovered = true;v.alerted = true end --REMOVE THIS
+                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) and meta.unlocked[k] then 
+                    v.unlocked = true
+                end
+                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) then G.P_LOCKED[#G.P_LOCKED+1] = v end
+                if not v.discovered and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^e_') or string.find(k, '^c_') or string.find(k, '^p_') or string.find(k, '^v_')) and meta.discovered[k] then 
+                    v.discovered = true
+                end
+                if v.discovered and meta.alerted[k] or v.set == 'Back' or v.start_alerted then 
+                    v.alerted = true
+                elseif v.discovered then
+                    v.alerted = false
+                end
+            end
+        end
+
     function get_starting_params()
         return {
             dollars = 4,
@@ -160,6 +335,288 @@ function SMODS.INIT.SixSuit()
 
         self:set_base(new_card)
         G.GAME.blind:debuff_card(self)
+    end
+
+    Game.init_game_object_six_suit_ref = Game.init_game_object
+    function Game:init_game_object()
+        local t = self.init_game_object_six_suit_ref()
+        t.hands = {
+            ["Flush Five"] = { visible = false, order = 1, mult = 16, chips = 160, s_mult = 16, s_chips = 160, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'S_A', true }, { 'S_A', true }, { 'S_A', true }, { 'S_A', true } } },
+            ["Flush House"] = { visible = false, order = 2, mult = 14, chips = 140, s_mult = 14, s_chips = 140, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'D_7', true }, { 'D_7', true }, { 'D_7', true }, { 'D_4', true }, { 'D_4', true } } },
+            ["Spectrum Five"] = { visible = false, order = 3, mult = 14, chips = 120, s_mult = 12, s_chips = 120, level = 1, l_mult = 3, l_chips = 50, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'H_A', true }, { 'C_A', true }, { 'S_A', true }, { 'R_A', true } } },
+            ["Five of a Kind"] = { visible = false, order = 4, mult = 12, chips = 120, s_mult = 12, s_chips = 120, level = 1, l_mult = 3, l_chips = 35, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'H_A', true }, { 'H_A', true }, { 'C_A', true }, { 'D_A', true } } },
+            ["Spectrum House"] = { visible = false, order = 5, mult = 10, chips = 110, s_mult = 10, s_chips = 110, level = 1, l_mult = 3, l_chips = 45, played = 0, played_this_round = 0, example = { { 'D_7', true }, { 'H_7', true }, { 'M_7', true }, { 'R_4', true }, { 'C_4', true } } },
+            ["Straight Flush"] = { visible = true, order = 6, mult = 8, chips = 100, s_mult = 8, s_chips = 100, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'S_Q', true }, { 'S_J', true }, { 'S_T', true }, { 'S_9', true }, { 'S_8', true } } },
+            ["Straight Spectrum"] = { visible = true, order = 7, mult = 7, chips = 80, s_mult = 7, s_chips = 80, level = 1, l_mult = 3, l_chips = 45, played = 0, played_this_round = 0, example = { { 'S_Q', true }, { 'M_J', true }, { 'C_T', true }, { 'R_9', true }, { 'H_8', true } } },
+            ["Four of a Kind"] = { visible = true, order = 8, mult = 7, chips = 60, s_mult = 7, s_chips = 60, level = 1, l_mult = 3, l_chips = 30, played = 0, played_this_round = 0, example = { { 'S_J', true }, { 'H_J', true }, { 'C_J', true }, { 'D_J', true }, { 'C_3', false } } },
+            ["Full House"] = { visible = true, order = 9, mult = 4, chips = 40, s_mult = 4, s_chips = 40, level = 1, l_mult = 2, l_chips = 25, played = 0, played_this_round = 0, example = { { 'H_K', true }, { 'C_K', true }, { 'D_K', true }, { 'S_2', true }, { 'D_2', true } } },
+            ["Flush"] = { visible = true, order = 10, mult = 4, chips = 35, s_mult = 4, s_chips = 35, level = 1, l_mult = 2, l_chips = 15, played = 0, played_this_round = 0, example = { { 'H_A', true }, { 'H_K', true }, { 'H_T', true }, { 'H_5', true }, { 'H_4', true } } },
+            ["Spectrum"] = { visible = true, order = 11, mult = 4, chips = 30, s_mult = 4, s_chips = 30, level = 1, l_mult = 2, l_chips = 15, played = 0, played_this_round = 0, example = { { 'H_2', true }, { 'D_5', true }, { 'S_8', true }, { 'C_T', true }, { 'R_A', true } } },
+            ["Straight"] = { visible = true, order = 12, mult = 4, chips = 30, s_mult = 4, s_chips = 30, level = 1, l_mult = 2, l_chips = 30, played = 0, played_this_round = 0, example = { { 'D_J', true }, { 'C_T', true }, { 'C_9', true }, { 'S_8', true }, { 'H_7', true } } },
+            ["Three of a Kind"] = { visible = true, order = 13, mult = 3, chips = 30, s_mult = 3, s_chips = 30, level = 1, l_mult = 2, l_chips = 20, played = 0, played_this_round = 0, example = { { 'S_T', true }, { 'C_T', true }, { 'D_T', true }, { 'H_6', false }, { 'D_5', false } } },
+            ["Two Pair"] = { visible = true, order = 14, mult = 2, chips = 20, s_mult = 2, s_chips = 20, level = 1, l_mult = 1, l_chips = 20, played = 0, played_this_round = 0, example = { { 'H_A', true }, { 'D_A', true }, { 'C_Q', false }, { 'H_4', true }, { 'C_4', true } } },
+            ["Pair"] = { visible = true, order = 15, mult = 2, chips = 10, s_mult = 2, s_chips = 10, level = 1, l_mult = 1, l_chips = 15, played = 0, played_this_round = 0, example = { { 'S_K', false }, { 'S_9', true }, { 'D_9', true }, { 'H_6', false }, { 'D_3', false } } },
+            ["High Card"] = { visible = true, order = 16, mult = 1, chips = 5, s_mult = 1, s_chips = 5, level = 1, l_mult = 1, l_chips = 10, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'D_Q', false }, { 'D_9', false }, { 'C_4', false }, { 'D_3', false } } },
+        }
+        return t
+    end
+
+    function get_spectrum(hand)
+        local suits = {
+            ["Spades"] = 0,
+            ["Hearts"] = 0,
+            ["Clubs"] = 0,
+            ["Diamonds"] = 0,
+            ["Stars"] = 0,
+            ["Moons"] = 0
+        }
+        for i = 1, #hand do
+            if hand[i].ability.name ~= 'Wild Card' then
+                for k, v in pairs(suits) do
+                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1 end
+                end
+            end
+        end
+        for i = 1, #hand do
+            if hand[i].ability.name == 'Wild Card' then
+                for k, v in pairs(suits) do
+                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1 end
+                end
+            end
+        end
+        local num_suits = 0
+        for k, v in pairs(suits) do
+            if v > 0 then num_suits = num_suits + 1 end
+        end
+        return (num_suits >= 5) and { hand } or {}
+    end
+
+    local evaluate_poker_hand_six_suit_ref = evaluate_poker_hand
+    function evaluate_poker_hand(hand)
+        local results = evaluate_poker_hand_six_suit_ref(hand)
+        results['Spectrum'] = {}
+        results['Straight Spectrum'] = {}
+        results['Spectrum House'] = {}
+        results['Spectrum Five'] = {}
+        local s = get_spectrum(hand)
+        if next(s) then
+            results['Spectrum'] = s
+            results.top = s
+            if next(get_straight(hand)) then
+                results['Straight Spectrum'] = s
+            end
+            if next(get_X_same(3, hand)) and next(get_X_same(2, hand)) then
+                results['Spectrum House'] = s
+            end
+            if next(get_X_same(5, hand)) then
+                results['Spectrum Five'] = s
+            end
+        end
+        return results
+    end
+
+    -- rewrite needed to make this extendable
+    G.FUNCS.get_poker_hand_info = function(_cards)
+        local poker_hands = evaluate_poker_hand(_cards)
+        local scoring_hand = {}
+        local text, disp_text, loc_disp_text = 'NULL', 'NULL', 'NULL'
+        for _, v in ipairs(G.handlist) do
+            if next(poker_hands[v]) then
+                text = v
+                scoring_hand = poker_hands[v][1]
+                break
+            end
+        end
+        disp_text = text
+        if text == 'Straight Flush' then
+            local min = 10
+            for j = 1, #scoring_hand do
+                if scoring_hand[j]:get_id() < min then min = scoring_hand[j]:get_id() end
+            end
+            if min >= 10 then
+                disp_text = 'Royal Flush'
+            end
+        end
+        if text == 'Straight Spectrum' then
+            local min = 10
+            for j = 1, #scoring_hand do
+                if scoring_hand[j]:get_id() < min then min = scoring_hand[j]:get_id() end
+            end
+            if min >= 10 then
+                disp_text = 'Royal Spectrum'
+            end
+        end
+        loc_disp_text = localize(disp_text, 'poker_hands')
+        return text, loc_disp_text, poker_hands, scoring_hand, disp_text
+    end
+
+    function create_UIBox_current_hands(simple)
+        local hands = {}
+        for _, v in ipairs(G.handlist) do
+            hands[#hands + 1] = create_UIBox_current_hand_row(v, simple)
+        end
+        local t = {
+            n = G.UIT.ROOT,
+            config = { align = "cm", minw = 3, padding = 0.1, r = 0.1, colour = G.C.CLEAR },
+            nodes = {
+                {
+                    n = G.UIT.R,
+                    config = { align = "cm", padding = 0.04 },
+                    nodes =
+                        hands
+                },
+            }
+        }
+        return t
+    end
+
+    G.FUNCS.your_collection_planet_page = function(args)
+        if not args or not args.cycle_config then return end
+        for j = 1, #G.your_collection do
+            for i = #G.your_collection[j].cards, 1, -1 do
+                local c = G.your_collection[j]:remove_card(G.your_collection[j].cards[i])
+                c:remove()
+                c = nil
+            end
+        end
+
+        for j = 1, #G.your_collection do
+            for i = 1, 4 do
+                local center = G.P_CENTER_POOLS["Planet"]
+                    [i + (j - 1) * (4) + (8 * (args.cycle_config.current_option - 1))]
+                if not center then break end
+                local card = Card(G.your_collection[j].T.x + G.your_collection[j].T.w / 2, G.your_collection[j].T.y,
+                    G.CARD_W, G.CARD_H, G.P_CARDS.empty, center)
+                card:start_materialize(nil, i > 1 or j > 1)
+                G.your_collection[j]:emplace(card)
+            end
+        end
+        INIT_COLLECTION_CARD_ALERTS()
+    end
+
+    function create_UIBox_your_collection_planets()
+        local deck_tables = {}
+
+        G.your_collection = {}
+        for j = 1, 2 do
+            G.your_collection[j] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                4 * G.CARD_W,
+                1 * G.CARD_H,
+                { card_limit = 4, type = 'title', highlight_limit = 0, collection = true })
+            table.insert(deck_tables,
+                {
+                    n = G.UIT.R,
+                    config = { align = "cm", padding = 0, no_fill = true },
+                    nodes = {
+                        { n = G.UIT.O, config = { object = G.your_collection[j] } }
+                    }
+                }
+            )
+        end
+
+        local planet_options = {}
+        for i = 1, math.ceil(#G.P_CENTER_POOLS.Planet / 8) do
+            table.insert(planet_options,
+                localize('k_page') .. ' ' .. tostring(i) .. '/' .. tostring(math.ceil(#G.P_CENTER_POOLS.Planet / 8)))
+        end
+
+        for j = 1, #G.your_collection do
+            for i = 1, 4 do
+                local center = G.P_CENTER_POOLS["Planet"][i + (j - 1) * (4)]
+                if not center then break end
+                local card = Card(G.your_collection[j].T.x + G.your_collection[j].T.w / 2, G.your_collection[j].T.y,
+                    G.CARD_W, G.CARD_H, nil, center)
+                card:start_materialize(nil, i > 1 or j > 1)
+                G.your_collection[j]:emplace(card)
+            end
+        end
+
+        INIT_COLLECTION_CARD_ALERTS()
+
+        local t = create_UIBox_generic_options({
+            back_func = 'your_collection',
+            contents = {
+                { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.1, r = 0.1, colour = G.C.BLACK, emboss = 0.05 }, nodes = deck_tables },
+                {
+                    n = G.UIT.R,
+                    config = { align = "cm" },
+                    nodes = {
+                        create_option_cycle({
+                            options = planet_options,
+                            w = 4.5,
+                            cycle_shoulders = true,
+                            opt_callback =
+                            'your_collection_planet_page',
+                            focus_args = { snap_to = true, nav = 'wide' },
+                            current_option = 1,
+                            colour =
+                                G.C.RED,
+                            no_pips = true
+                        })
+                    }
+                }
+            }
+        })
+        return t
+    end
+
+    function create_UIBox_your_collection_tarots()
+        local deck_tables = {}
+
+        G.your_collection = {}
+        for j = 1, 2 do
+            G.your_collection[j] = CardArea(
+                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
+                (4.25 + j) * G.CARD_W,
+                1 * G.CARD_H,
+                { card_limit = 4 + j, type = 'title', highlight_limit = 0, collection = true })
+            table.insert(deck_tables,
+                {
+                    n = G.UIT.R,
+                    config = { align = "cm", padding = 0, no_fill = true },
+                    nodes = {
+                        { n = G.UIT.O, config = { object = G.your_collection[j] } }
+                    }
+                }
+            )
+        end
+
+        local tarot_options = {}
+        for i = 1, math.ceil(#G.P_CENTER_POOLS.Tarot / 11) do
+            table.insert(tarot_options,
+                localize('k_page') .. ' ' .. tostring(i) .. '/' .. tostring(math.ceil(#G.P_CENTER_POOLS.Tarot / 11)))
+        end
+
+        for j = 1, #G.your_collection do
+            for i = 1, 4 + j do
+                local center = G.P_CENTER_POOLS["Tarot"][i + (j - 1) * (5)]
+                if not center then break end
+                local card = Card(G.your_collection[j].T.x + G.your_collection[j].T.w / 2, G.your_collection[j].T.y,
+                    G.CARD_W, G.CARD_H, nil, center)
+                card:start_materialize(nil, i > 1 or j > 1)
+                G.your_collection[j]:emplace(card)
+            end
+        end
+
+        INIT_COLLECTION_CARD_ALERTS()
+
+        local t = create_UIBox_generic_options({
+            back_func = 'your_collection',
+            contents = {
+                { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.1, r = 0.1, colour = G.C.BLACK, emboss = 0.05 }, nodes = deck_tables },
+                {
+                    n = G.UIT.R,
+                    config = { align = "cm" },
+                    nodes = {
+                        create_option_cycle({ options = tarot_options, w = 4.5, cycle_shoulders = true, opt_callback =
+                        'your_collection_tarot_page', focus_args = { snap_to = true, nav = 'wide' }, current_option = 1, colour =
+                        G.C.RED, no_pips = true })
+                    }
+                }
+            }
+        })
+        return t
     end
 end
 
@@ -264,7 +721,7 @@ function G.UIDEF.view_deck(unplayed_only)
             local view_deck = CardArea(
                 G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
                 6.5 * G.CARD_W,
-                ((num_suits > 4) and (1-0.1*num_suits) or 0.6) * G.CARD_H,
+                ((num_suits > 4) and (1 - 0.1 * num_suits) or 0.6) * G.CARD_H,
                 {
                     card_limit = #SUITS[suit_map[j]],
                     type = 'title',
@@ -769,9 +1226,9 @@ function G.UIDEF.deck_preview(args)
     return t
 end
 
-local run_setup_option_ref = G.UIDEF.run_setup_option
+local run_setup_option_six_suit_ref = G.UIDEF.run_setup_option
 function G.UIDEF.run_setup_option(type)
-    local t = run_setup_option_ref(type)
+    local t = run_setup_option_six_suit_ref(type)
     t.nodes[1].nodes[5] = {
         n = G.UIT.R,
         config = { align = "cm", padding = 0 },
@@ -781,7 +1238,7 @@ function G.UIDEF.run_setup_option(type)
                 config = { align = "cm", minw = 2.4 },
                 nodes = {
                     type == 'New Run' and
-                    create_toggle{ col = true, label = 'Six Suits', label_scale = 0.25, w = 0, scale = 0.7, ref_table = G, ref_value = 'six_suits' } or
+                    create_toggle { col = true, label = 'Six Suits', label_scale = 0.25, w = 0, scale = 0.7, ref_table = G, ref_value = 'six_suits' } or
                     nil
                 }
             }
@@ -789,7 +1246,8 @@ function G.UIDEF.run_setup_option(type)
     }
     return t
 end
-Game.start_run_ref = Game.start_run
+
+Game.start_run_six_suit_ref = Game.start_run
 function Game:start_run(args)
     if (not args.challenge or not args.challenge.deck) and (not G.six_suits) then
         args.challenge = args.challenge or {}
@@ -799,7 +1257,19 @@ function Game:start_run(args)
     elseif not G.six_suits then
         args.challenge.deck.no_suits = { R = true, M = true }
     end
-    self:start_run_ref(args)
+    self:start_run_six_suit_ref(args)
 end
+
+Blind.set_blind_ref = Blind.set_blind
+function Blind:set_blind(blind, reset, silent)
+    self:set_blind_ref(blind, reset, silent)
+    if (self.name == "The Eye") and not reset then
+        self.hands["Spectrum"] = false
+        self.hands["Straight Spectrum"] = false
+        self.hands["Spectrum House"] = false
+        self.hands["Spectrum Five"] = false
+    end
+end
+
 ----------------------------------------------
 ------------MOD CODE END---------------------
