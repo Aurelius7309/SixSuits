@@ -385,14 +385,14 @@ function SMODS.INIT.SixSuit()
         for i = 1, #hand do
             if hand[i].ability.name ~= 'Wild Card' then
                 for k, v in pairs(suits) do
-                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1 end
+                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1; break end
                 end
             end
         end
         for i = 1, #hand do
             if hand[i].ability.name == 'Wild Card' then
                 for k, v in pairs(suits) do
-                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1 end
+                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1; break end
                 end
             end
         end
