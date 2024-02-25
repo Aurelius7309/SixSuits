@@ -215,8 +215,8 @@ function SMODS.INIT.SixSuit()
         }
     }
     local tarots = {
-        c_inv_star = { order = 23, discovered = true, cost = 3, consumeable = true, name = "The Star", pos = { x = 2, y = 7 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Stars', max_highlighted = 3 } },
-        c_inv_moon = { order = 24, discovered = true, cost = 3, consumeable = true, name = "The Moon", pos = { x = 1, y = 7 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Moons', max_highlighted = 3 } },
+        c_inv_star = { order = 23, discovered = false, cost = 3, consumeable = true, name = "The Star", pos = { x = 2, y = 7 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Stars', max_highlighted = 3 } },
+        c_inv_moon = { order = 24, discovered = false, cost = 3, consumeable = true, name = "The Moon", pos = { x = 1, y = 7 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Moons', max_highlighted = 3 } },
     }
     local planet_loc_text = {
         [1] = '{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up',
@@ -619,48 +619,6 @@ function SMODS.INIT.SixSuit()
         return t
     end
 end
-
---[[
-Game.init_item_prototypes_ref = Game.init_item_prototypes
-function Game:init_item_prototypes()
-    self.P_CENTERS.c_moon = {
-        order = 19,
-        discovered = false,
-        cost = 3,
-        consumeable = true,
-        name = "The Moon",
-        pos = { x = 8, y = 1 },
-        set =
-        "Tarot",
-        effect = "Suit Conversion",
-        cost_mult = 1.0,
-        config = { suit_conv = 'Moons', max_highlighted = 4 }
-    }
-
-    self:save_progress()
-    self.P_CENTER_POOLS['Tarot_Planet'] = {}
-    self.P_CENTER_POOLS['Joker'] = {}
-    for k, v in pairs(self.P_CENTERS) do
-        v.key = k
-        if v.set == 'Joker' then table.insert(self.P_CENTER_POOLS['Joker'], v) end
-        if v.set and v.demo and v.pos then table.insert(self.P_CENTER_POOLS['Demo'], v) end
-        if not v.wip then
-            if v.set and v.set ~= 'Joker' and not v.skip_pool and not v.omit then
-                table.insert(
-                    self.P_CENTER_POOLS[v.set], v)
-            end
-            if v.set == 'Tarot' or v.set == 'Planet' then table.insert(self.P_CENTER_POOLS['Tarot_Planet'], v) end
-            if v.consumeable then table.insert(self.P_CENTER_POOLS['Consumeables'], v) end
-            if v.rarity and v.set == 'Joker' and not v.demo then table.insert(self.P_JOKER_RARITY_POOLS[v.rarity], v) end
-        end
-    end
-    table.sort(self.P_CENTER_POOLS["Tarot"], function(a, b) return a.order < b.order end)
-    table.sort(self.P_CENTER_POOLS["Planet"], function(a, b) return a.order < b.order end)
-    table.sort(self.P_CENTER_POOLS["Tarot_Planet"], function(a, b) return a.order < b.order end)
-    table.sort(self.P_CENTER_POOLS["Spectral"], function(a, b) return a.order < b.order end)
-end
-]]
-
 
 -- overwriting as there is no way to modify suits in the original function
 function get_flush(hand)
