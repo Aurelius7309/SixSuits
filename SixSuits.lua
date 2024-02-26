@@ -114,7 +114,7 @@ function SMODS.INIT.SixSuit()
 
     -- ensure the original suits are first in the list
     G.SUITS = G.SUITS or { "Hearts", "Diamonds", "Clubs", "Spades" }
-    local _suits = { "Stars" }
+    local _suits = { "Stars", "Moons" }
     for _, v in ipairs(_suits) do
         table.insert(G.SUITS, v)
     end
