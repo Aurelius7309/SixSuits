@@ -53,85 +53,32 @@ function SMODS.INIT.SixSuit()
         [2] = 'each with a different suit'
     }
     G.six_suits = false
-    G.handlist = {
-        "Flush Five",
-        "Flush House",
-        "Spectrum Five",
-        "Five of a Kind",
-        "Spectrum House",
-        "Straight Flush",
-        "Straight Spectrum",
-        "Four of a Kind",
-        "Full House",
-        "Flush",
-        "Spectrum",
-        "Straight",
-        "Three of a Kind",
-        "Two Pair",
-        "Pair",
-        "High Card",
-    }
+
+    --* add hands to handlist
+    local ii = {}
+    for i, v in ipairs(G.handlist) do
+        local hand_to_add = (v == 'Flush House') and 'Spectrum Five' or (v == 'Straight Flush') and 'Spectrum House' or
+            (v == 'Four of a Kind') and 'Straight Spectrum' or (v == 'Two Pair') and 'Spectrum' or nil
+        if hand_to_add then
+            ii[hand_to_add] = i
+        end
+    end
+    local j = 0
+    for hand, i in pairs(ii) do
+        table.insert(G.handlist, i + j, hand)
+        j = j + 1
+    end
+
     for k, v in pairs(G.CHALLENGES) do
         v = v or {}
         v.deck = v.deck or {}
-        v.deck.no_suits = v.deck.no_suits or {}
-        v.deck.no_suits.R = true
-        v.deck.no_suits.M = true
+        v.deck.yes_suits = v.deck.yes_suits or {}
+        v.deck.yes_suits.H = true
+        v.deck.yes_suits.D = true
+        v.deck.yes_suits.S = true
+        v.deck.yes_suits.C = true
     end
-
-    G.P_CARDS = {
-        H_2 = { name = "2 of Hearts", value = '2', suit = 'Hearts', pos = { x = 0, y = 0 } },
-        H_3 = { name = "3 of Hearts", value = '3', suit = 'Hearts', pos = { x = 1, y = 0 } },
-        H_4 = { name = "4 of Hearts", value = '4', suit = 'Hearts', pos = { x = 2, y = 0 } },
-        H_5 = { name = "5 of Hearts", value = '5', suit = 'Hearts', pos = { x = 3, y = 0 } },
-        H_6 = { name = "6 of Hearts", value = '6', suit = 'Hearts', pos = { x = 4, y = 0 } },
-        H_7 = { name = "7 of Hearts", value = '7', suit = 'Hearts', pos = { x = 5, y = 0 } },
-        H_8 = { name = "8 of Hearts", value = '8', suit = 'Hearts', pos = { x = 6, y = 0 } },
-        H_9 = { name = "9 of Hearts", value = '9', suit = 'Hearts', pos = { x = 7, y = 0 } },
-        H_T = { name = "10 of Hearts", value = '10', suit = 'Hearts', pos = { x = 8, y = 0 } },
-        H_J = { name = "Jack of Hearts", value = 'Jack', suit = 'Hearts', pos = { x = 9, y = 0 } },
-        H_Q = { name = "Queen of Hearts", value = 'Queen', suit = 'Hearts', pos = { x = 10, y = 0 } },
-        H_K = { name = "King of Hearts", value = 'King', suit = 'Hearts', pos = { x = 11, y = 0 } },
-        H_A = { name = "Ace of Hearts", value = 'Ace', suit = 'Hearts', pos = { x = 12, y = 0 } },
-        C_2 = { name = "2 of Clubs", value = '2', suit = 'Clubs', pos = { x = 0, y = 1 } },
-        C_3 = { name = "3 of Clubs", value = '3', suit = 'Clubs', pos = { x = 1, y = 1 } },
-        C_4 = { name = "4 of Clubs", value = '4', suit = 'Clubs', pos = { x = 2, y = 1 } },
-        C_5 = { name = "5 of Clubs", value = '5', suit = 'Clubs', pos = { x = 3, y = 1 } },
-        C_6 = { name = "6 of Clubs", value = '6', suit = 'Clubs', pos = { x = 4, y = 1 } },
-        C_7 = { name = "7 of Clubs", value = '7', suit = 'Clubs', pos = { x = 5, y = 1 } },
-        C_8 = { name = "8 of Clubs", value = '8', suit = 'Clubs', pos = { x = 6, y = 1 } },
-        C_9 = { name = "9 of Clubs", value = '9', suit = 'Clubs', pos = { x = 7, y = 1 } },
-        C_T = { name = "10 of Clubs", value = '10', suit = 'Clubs', pos = { x = 8, y = 1 } },
-        C_J = { name = "Jack of Clubs", value = 'Jack', suit = 'Clubs', pos = { x = 9, y = 1 } },
-        C_Q = { name = "Queen of Clubs", value = 'Queen', suit = 'Clubs', pos = { x = 10, y = 1 } },
-        C_K = { name = "King of Clubs", value = 'King', suit = 'Clubs', pos = { x = 11, y = 1 } },
-        C_A = { name = "Ace of Clubs", value = 'Ace', suit = 'Clubs', pos = { x = 12, y = 1 } },
-        D_2 = { name = "2 of Diamonds", value = '2', suit = 'Diamonds', pos = { x = 0, y = 2 } },
-        D_3 = { name = "3 of Diamonds", value = '3', suit = 'Diamonds', pos = { x = 1, y = 2 } },
-        D_4 = { name = "4 of Diamonds", value = '4', suit = 'Diamonds', pos = { x = 2, y = 2 } },
-        D_5 = { name = "5 of Diamonds", value = '5', suit = 'Diamonds', pos = { x = 3, y = 2 } },
-        D_6 = { name = "6 of Diamonds", value = '6', suit = 'Diamonds', pos = { x = 4, y = 2 } },
-        D_7 = { name = "7 of Diamonds", value = '7', suit = 'Diamonds', pos = { x = 5, y = 2 } },
-        D_8 = { name = "8 of Diamonds", value = '8', suit = 'Diamonds', pos = { x = 6, y = 2 } },
-        D_9 = { name = "9 of Diamonds", value = '9', suit = 'Diamonds', pos = { x = 7, y = 2 } },
-        D_T = { name = "10 of Diamonds", value = '10', suit = 'Diamonds', pos = { x = 8, y = 2 } },
-        D_J = { name = "Jack of Diamonds", value = 'Jack', suit = 'Diamonds', pos = { x = 9, y = 2 } },
-        D_Q = { name = "Queen of Diamonds", value = 'Queen', suit = 'Diamonds', pos = { x = 10, y = 2 } },
-        D_K = { name = "King of Diamonds", value = 'King', suit = 'Diamonds', pos = { x = 11, y = 2 } },
-        D_A = { name = "Ace of Diamonds", value = 'Ace', suit = 'Diamonds', pos = { x = 12, y = 2 } },
-        S_2 = { name = "2 of Spades", value = '2', suit = 'Spades', pos = { x = 0, y = 3 } },
-        S_3 = { name = "3 of Spades", value = '3', suit = 'Spades', pos = { x = 1, y = 3 } },
-        S_4 = { name = "4 of Spades", value = '4', suit = 'Spades', pos = { x = 2, y = 3 } },
-        S_5 = { name = "5 of Spades", value = '5', suit = 'Spades', pos = { x = 3, y = 3 } },
-        S_6 = { name = "6 of Spades", value = '6', suit = 'Spades', pos = { x = 4, y = 3 } },
-        S_7 = { name = "7 of Spades", value = '7', suit = 'Spades', pos = { x = 5, y = 3 } },
-        S_8 = { name = "8 of Spades", value = '8', suit = 'Spades', pos = { x = 6, y = 3 } },
-        S_9 = { name = "9 of Spades", value = '9', suit = 'Spades', pos = { x = 7, y = 3 } },
-        S_T = { name = "10 of Spades", value = '10', suit = 'Spades', pos = { x = 8, y = 3 } },
-        S_J = { name = "Jack of Spades", value = 'Jack', suit = 'Spades', pos = { x = 9, y = 3 } },
-        S_Q = { name = "Queen of Spades", value = 'Queen', suit = 'Spades', pos = { x = 10, y = 3 } },
-        S_K = { name = "King of Spades", value = 'King', suit = 'Spades', pos = { x = 11, y = 3 } },
-        S_A = { name = "Ace of Spades", value = 'Ace', suit = 'Spades', pos = { x = 12, y = 3 } },
+    local new_cards = {
         R_2 = { name = "2 of Stars", value = '2', suit = 'Stars', pos = { x = 0, y = 4 } },
         R_3 = { name = "3 of Stars", value = '3', suit = 'Stars', pos = { x = 1, y = 4 } },
         R_4 = { name = "4 of Stars", value = '4', suit = 'Stars', pos = { x = 2, y = 4 } },
@@ -159,6 +106,33 @@ function SMODS.INIT.SixSuit()
         M_K = { name = "King of Moons", value = 'King', suit = 'Moons', pos = { x = 11, y = 5 } },
         M_A = { name = "Ace of Moons", value = 'Ace', suit = 'Moons', pos = { x = 12, y = 5 } }
     }
+    for k, v in pairs(new_cards) do
+        if not G.P_CARDS[k] then
+            G.P_CARDS[k] = v
+        end
+    end
+
+    -- ensure the original suits are first in the list
+    G.SUITS = G.SUITS or { "Hearts", "Diamonds", "Clubs", "Spades" }
+    local _suits = { "Stars" }
+    for _, v in ipairs(_suits) do
+        table.insert(G.SUITS, v)
+    end
+    G.SUIT_TABLE = G.SUIT_TABLE or {}
+    G.SUIT_TABLE["Hearts"] = "H"
+    G.SUIT_TABLE["Spades"] = "S"
+    G.SUIT_TABLE["Diamonds"] = "D"
+    G.SUIT_TABLE["Clubs"] = "C"
+    G.SUIT_TABLE["Stars"] = "R"
+    G.SUIT_TABLE["Moons"] = "M"
+
+    G.tally_sprites = G.tally_sprites or {}
+    G.tally_sprites["Hearts"] = { x = 0, y = 1 }
+    G.tally_sprites["Diamonds"] = { x = 1, y = 1 }
+    G.tally_sprites["Clubs"] = { x = 2, y = 1 }
+    G.tally_sprites["Spades"] = { x = 3, y = 1 }
+    G.tally_sprites["Stars"] = { x = 4, y = 1 }
+    G.tally_sprites["Moons"] = { x = 5, y = 1 }
 
     local planets = {
         c_gj_273_c = {
@@ -315,7 +289,6 @@ function SMODS.INIT.SixSuit()
             consumable_slots = 2,
             no_faces = false,
             erratic_suits_and_ranks = false,
-            six_suits = false
         }
     end
 
@@ -330,12 +303,7 @@ function SMODS.INIT.SixSuit()
     end
 
     function Card:change_suit(new_suit)
-        local new_code = (new_suit == 'Diamonds' and 'D_') or
-            (new_suit == 'Spades' and 'S_') or
-            (new_suit == 'Clubs' and 'C_') or
-            (new_suit == 'Hearts' and 'H_') or
-            (new_suit == 'Stars' and 'R_') or
-            (new_suit == 'Moons' and 'M_')
+        local new_code = G.SUIT_TABLE[new_suit] .. "_"
         local new_val = (self.base.value == 'Ace' and 'A') or
             (self.base.value == 'King' and 'K') or
             (self.base.value == 'Queen' and 'Q') or
@@ -351,53 +319,39 @@ function SMODS.INIT.SixSuit()
     Game.init_game_object_six_suit_ref = Game.init_game_object
     function Game:init_game_object()
         local t = self.init_game_object_six_suit_ref()
-        t.hands = {
-            ["Flush Five"] = { visible = false, order = 1, mult = 16, chips = 160, s_mult = 16, s_chips = 160, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'S_A', true }, { 'S_A', true }, { 'S_A', true }, { 'S_A', true } } },
-            ["Flush House"] = { visible = false, order = 2, mult = 14, chips = 140, s_mult = 14, s_chips = 140, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'D_7', true }, { 'D_7', true }, { 'D_7', true }, { 'D_4', true }, { 'D_4', true } } },
-            ["Spectrum Five"] = { visible = false, order = 3, mult = 14, chips = 120, s_mult = 14, s_chips = 120, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'H_A', true }, { 'C_A', true }, { 'S_A', true }, { 'R_A', true } } },
-            ["Five of a Kind"] = { visible = false, order = 4, mult = 12, chips = 120, s_mult = 12, s_chips = 120, level = 1, l_mult = 3, l_chips = 35, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'H_A', true }, { 'H_A', true }, { 'C_A', true }, { 'D_A', true } } },
-            ["Straight Flush"] = { visible = true, order = 5, mult = 8, chips = 100, s_mult = 8, s_chips = 100, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'S_Q', true }, { 'S_J', true }, { 'S_T', true }, { 'S_9', true }, { 'S_8', true } } },
-            ["Spectrum House"] = { visible = false, order = 6, mult = 7, chips = 80, s_mult = 7, s_chips = 80, level = 1, l_mult = 3, l_chips = 35, played = 0, played_this_round = 0, example = { { 'D_7', true }, { 'H_7', true }, { 'M_7', true }, { 'R_4', true }, { 'C_4', true } } },
-            ["Four of a Kind"] = { visible = true, order = 7, mult = 7, chips = 60, s_mult = 7, s_chips = 60, level = 1, l_mult = 3, l_chips = 30, played = 0, played_this_round = 0, example = { { 'S_J', true }, { 'H_J', true }, { 'C_J', true }, { 'D_J', true }, { 'C_3', false } } },
-            ["Straight Spectrum"] = { visible = true, order = 8, mult = 6, chips = 60, s_mult = 6, s_chips = 60, level = 1, l_mult = 2, l_chips = 30, played = 0, played_this_round = 0, example = { { 'S_Q', true }, { 'M_J', true }, { 'C_T', true }, { 'R_9', true }, { 'H_8', true } } },
-            ["Full House"] = { visible = true, order = 8, mult = 4, chips = 40, s_mult = 4, s_chips = 40, level = 1, l_mult = 2, l_chips = 25, played = 0, played_this_round = 0, example = { { 'H_K', true }, { 'C_K', true }, { 'D_K', true }, { 'S_2', true }, { 'D_2', true } } },
-            ["Flush"] = { visible = true, order = 10, mult = 4, chips = 35, s_mult = 4, s_chips = 35, level = 1, l_mult = 2, l_chips = 15, played = 0, played_this_round = 0, example = { { 'H_A', true }, { 'H_K', true }, { 'H_T', true }, { 'H_5', true }, { 'H_4', true } } },
-            ["Straight"] = { visible = true, order = 11, mult = 4, chips = 30, s_mult = 4, s_chips = 30, level = 1, l_mult = 2, l_chips = 30, played = 0, played_this_round = 0, example = { { 'D_J', true }, { 'C_T', true }, { 'C_9', true }, { 'S_8', true }, { 'H_7', true } } },
-            ["Three of a Kind"] = { visible = true, order = 12, mult = 3, chips = 30, s_mult = 3, s_chips = 30, level = 1, l_mult = 2, l_chips = 20, played = 0, played_this_round = 0, example = { { 'S_T', true }, { 'C_T', true }, { 'D_T', true }, { 'H_6', false }, { 'D_5', false } } },
-            ["Two Pair"] = { visible = true, order = 13, mult = 2, chips = 20, s_mult = 2, s_chips = 20, level = 1, l_mult = 1, l_chips = 20, played = 0, played_this_round = 0, example = { { 'H_A', true }, { 'D_A', true }, { 'C_Q', false }, { 'H_4', true }, { 'C_4', true } } },
-            ["Spectrum"] = { visible = true, order = 14, mult = 2, chips = 15, s_mult = 2, s_chips = 15, level = 1, l_mult = 1, l_chips = 20, played = 0, played_this_round = 0, example = { { 'H_2', true }, { 'D_5', true }, { 'S_8', true }, { 'C_T', true }, { 'R_A', true } } },
-            ["Pair"] = { visible = true, order = 15, mult = 2, chips = 10, s_mult = 2, s_chips = 10, level = 1, l_mult = 1, l_chips = 15, played = 0, played_this_round = 0, example = { { 'S_K', false }, { 'S_9', true }, { 'D_9', true }, { 'H_6', false }, { 'D_3', false } } },
-            ["High Card"] = { visible = true, order = 16, mult = 1, chips = 5, s_mult = 1, s_chips = 5, level = 1, l_mult = 1, l_chips = 10, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'D_Q', false }, { 'D_9', false }, { 'C_4', false }, { 'D_3', false } } },
-        }
+        t.hands['Spectrum Five'] = { visible = false, order = t.hands['Flush House'].order + 0.1, mult = 14, chips = 120, s_mult = 14, s_chips = 120, level = 1, l_mult = 3, l_chips = 40, played = 0, played_this_round = 0, example = { { 'S_A', true }, { 'H_A', true }, { 'C_A', true }, { 'S_A', true }, { 'R_A', true } } }
+        t.hands['Spectrum House'] = { visible = false, order = t.hands['Straight Flush'].order + 0.1, mult = 7, chips = 80, s_mult = 7, s_chips = 80, level = 1, l_mult = 3, l_chips = 35, played = 0, played_this_round = 0, example = { { 'D_7', true }, { 'H_7', true }, { 'M_7', true }, { 'R_4', true }, { 'C_4', true } } }
+        t.hands['Straight Spectrum'] = { visible = true, order = t.hands['Four of a Kind'].order + 0.1, mult = 6, chips = 60, s_mult = 6, s_chips = 60, level = 1, l_mult = 2, l_chips = 35, played = 0, played_this_round = 0, example = { { 'S_Q', true }, { 'M_J', true }, { 'C_T', true }, { 'R_9', true }, { 'H_8', true } } }
+        t.hands['Spectrum'] = { visible = true, order = t.hands['Two Pair'].order + 0.1, mult = 2, chips = 20, s_mult = 2, s_chips = 20, level = 1, l_mult = 1, l_chips = 20, played = 0, played_this_round = 0, example = { { 'H_2', true }, { 'D_5', true }, { 'S_8', true }, { 'C_T', true }, { 'R_A', true } } }
         return t
     end
 
     function get_spectrum(hand)
-        local suits = {
-            ["Spades"] = 0,
-            ["Hearts"] = 0,
-            ["Clubs"] = 0,
-            ["Diamonds"] = 0,
-            ["Stars"] = 0,
-            ["Moons"] = 0
-        }
+        local suits = {}
+        for _, v in ipairs(G.SUITS) do
+            suits[v] = 0
+        end
         if #hand < 5 or #hand > 5 then return {} end
         for i = 1, #hand do
             if hand[i].ability.name ~= 'Wild Card' then
                 for k, v in pairs(suits) do
-                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1; break end
+                    if hand[i]:is_suit(k) and v == 0 then
+                        suits[k] = v + 1; break
+                    end
                 end
             end
         end
         for i = 1, #hand do
             if hand[i].ability.name == 'Wild Card' then
                 for k, v in pairs(suits) do
-                    if hand[i]:is_suit(k) and v == 0 then suits[k] = v + 1; break end
+                    if hand[i]:is_suit(k) and v == 0 then
+                        suits[k] = v + 1; break
+                    end
                 end
             end
         end
         local num_suits = 0
-        for k, v in pairs(suits) do
+        for _, v in pairs(suits) do
             if v > 0 then num_suits = num_suits + 1 end
         end
         return (num_suits >= 5) and { hand } or {}
@@ -427,8 +381,9 @@ function SMODS.INIT.SixSuit()
         return results
     end
 
-    -- rewrite needed to make this extendable
-    G.FUNCS.get_poker_hand_info = function(_cards)
+    --! DO NOT MODIFY | add hands to G.handlist and G.GAME.hands instead
+    --* I tried to turn this into a hook, but I would end up needing to re-evaluate the result anyways
+    function G.FUNCS.get_poker_hand_info(_cards)
         local poker_hands = evaluate_poker_hand(_cards)
         local scoring_hand = {}
         local text, disp_text, loc_disp_text = 'NULL', 'NULL', 'NULL'
@@ -462,6 +417,7 @@ function SMODS.INIT.SixSuit()
         return text, loc_disp_text, poker_hands, scoring_hand, disp_text
     end
 
+    --! DO NOT MODIFY | handles hands added to G.handlist
     function create_UIBox_current_hands(simple)
         local hands = {}
         for _, v in ipairs(G.handlist) do
@@ -482,6 +438,7 @@ function SMODS.INIT.SixSuit()
         return t
     end
 
+    --! not extensible, original function does not paginate
     G.FUNCS.your_collection_planet_page = function(args)
         if not args or not args.cycle_config then return end
         for j = 1, #G.your_collection do
@@ -573,6 +530,7 @@ function SMODS.INIT.SixSuit()
         return t
     end
 
+    -- only change is to allow for incomplete pages
     function create_UIBox_your_collection_tarots()
         local deck_tables = {}
 
@@ -641,18 +599,11 @@ function SMODS.INIT.SixSuit()
     end
 end
 
--- overwriting as there is no way to modify suits in the original function
+--! DO NOT MODIFY | recognizes suits from G.SUITS
 function get_flush(hand)
     local ret = {}
     local four_fingers = next(find_joker('Four Fingers'))
-    local suits = {
-        "Spades",
-        "Hearts",
-        "Clubs",
-        "Diamonds",
-        "Stars",
-        "Moons"
-    }
+    local suits = G.SUITS
     if #hand > 5 or #hand < (5 - (four_fingers and 1 or 0)) then
         return ret
     else
@@ -674,35 +625,31 @@ function get_flush(hand)
     end
 end
 
+--! DO NOT MODIFY | recognizes suits from G.SUITS
 function G.UIDEF.view_deck(unplayed_only)
     local deck_tables = {}
     remove_nils(G.playing_cards)
     G.VIEWING_DECK = true
     table.sort(G.playing_cards, function(a, b) return a:get_nominal('suit') > b:get_nominal('suit') end)
-    local SUITS = {
-        Spades = {},
-        Hearts = {},
-        Clubs = {},
-        Diamonds = {},
-        Stars = {},
-        Moons = {}
-    }
-    local suit_map = { 'Spades', 'Hearts', 'Clubs', 'Diamonds', 'Stars', 'Moons' }
+    local SUITS = {}
+    for _, v in ipairs(G.SUITS) do
+        SUITS[v] = {}
+    end
     for k, v in ipairs(G.playing_cards) do
         table.insert(SUITS[v.base.suit], v)
     end
     local num_suits = 0
-    for j = 1, 6 do
-        if SUITS[suit_map[j]][1] then num_suits = num_suits + 1 end
+    for j = 1, #G.SUITS do
+        if SUITS[G.SUITS[j]][1] then num_suits = num_suits + 1 end
     end
-    for j = 1, 6 do
-        if SUITS[suit_map[j]][1] then
+    for j = 1, #G.SUITS do
+        if SUITS[G.SUITS[j]][1] then
             local view_deck = CardArea(
                 G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
                 6.5 * G.CARD_W,
-                ((num_suits > 4) and (1 - 0.1 * num_suits) or 0.6) * G.CARD_H,
+                ((num_suits > 8) and 0.2 or (num_suits > 4) and (1 - 0.1 * num_suits) or 0.6) * G.CARD_H,
                 {
-                    card_limit = #SUITS[suit_map[j]],
+                    card_limit = #SUITS[G.SUITS[j]],
                     type = 'title',
                     view_deck = true,
                     highlight_limit = 0,
@@ -719,13 +666,13 @@ function G.UIDEF.view_deck(unplayed_only)
                 }
             )
 
-            for i = 1, #SUITS[suit_map[j]] do
-                if SUITS[suit_map[j]][i] then
+            for i = 1, #SUITS[G.SUITS[j]] do
+                if SUITS[G.SUITS[j]][i] then
                     local greyed, _scale = nil, 0.7
-                    if unplayed_only and not ((SUITS[suit_map[j]][i].area and SUITS[suit_map[j]][i].area == G.deck) or SUITS[suit_map[j]][i].ability.wheel_flipped) then
+                    if unplayed_only and not ((SUITS[G.SUITS[j]][i].area and SUITS[G.SUITS[j]][i].area == G.deck) or SUITS[G.SUITS[j]][i].ability.wheel_flipped) then
                         greyed = true
                     end
-                    local copy = copy_card(SUITS[suit_map[j]][i], nil, _scale)
+                    local copy = copy_card(SUITS[G.SUITS[j]][i], nil, _scale)
                     copy.greyed = greyed
                     copy.T.x = view_deck.T.x + view_deck.T.w / 2
                     copy.T.y = view_deck.T.y
@@ -739,8 +686,12 @@ function G.UIDEF.view_deck(unplayed_only)
 
     local flip_col = G.C.WHITE
 
-    local suit_tallies = { ['Spades'] = 0, ['Hearts'] = 0, ['Clubs'] = 0, ['Diamonds'] = 0, ['Stars'] = 0, ['Moons'] = 0 }
-    local mod_suit_tallies = { ['Spades'] = 0, ['Hearts'] = 0, ['Clubs'] = 0, ['Diamonds'] = 0, ['Stars'] = 0, ['Moons'] = 0 }
+    local suit_tallies = {}
+    local mod_suit_tallies = {}
+    for _, v in ipairs(G.SUITS) do
+        suit_tallies[v] = 0
+        mod_suit_tallies[v] = 0
+    end
     local rank_tallies = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     local mod_rank_tallies = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     local rank_name_mapping = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A' }
@@ -752,17 +703,14 @@ function G.UIDEF.view_deck(unplayed_only)
     local mod_ace_tally = 0
     local wheel_flipped = 0
 
-    for k, v in ipairs(G.playing_cards) do
+    for _, v in ipairs(G.playing_cards) do
         if v.ability.name ~= 'Stone Card' and (not unplayed_only or ((v.area and v.area == G.deck) or v.ability.wheel_flipped)) then
             if v.ability.wheel_flipped and unplayed_only then wheel_flipped = wheel_flipped + 1 end
             --For the suits
             suit_tallies[v.base.suit] = (suit_tallies[v.base.suit] or 0) + 1
-            mod_suit_tallies['Spades'] = (mod_suit_tallies['Spades'] or 0) + (v:is_suit('Spades') and 1 or 0)
-            mod_suit_tallies['Hearts'] = (mod_suit_tallies['Hearts'] or 0) + (v:is_suit('Hearts') and 1 or 0)
-            mod_suit_tallies['Clubs'] = (mod_suit_tallies['Clubs'] or 0) + (v:is_suit('Clubs') and 1 or 0)
-            mod_suit_tallies['Diamonds'] = (mod_suit_tallies['Diamonds'] or 0) + (v:is_suit('Diamonds') and 1 or 0)
-            mod_suit_tallies['Stars'] = (mod_suit_tallies['Stars'] or 0) + (v:is_suit('Stars') and 1 or 0)
-            mod_suit_tallies['Moons'] = (mod_suit_tallies['Moons'] or 0) + (v:is_suit('Moons') and 1 or 0)
+            for kk, vv in pairs(mod_suit_tallies) do
+                mod_suit_tallies[kk] = (vv or 0) + (v:is_suit(kk) and 1 or 0)
+            end
 
             --for face cards/numbered cards/aces
             local card_id = v:get_id()
@@ -783,13 +731,10 @@ function G.UIDEF.view_deck(unplayed_only)
         end
     end
 
-    local modded = (face_tally ~= mod_face_tally) or
-        (mod_suit_tallies['Spades'] ~= suit_tallies['Spades']) or
-        (mod_suit_tallies['Hearts'] ~= suit_tallies['Hearts']) or
-        (mod_suit_tallies['Clubs'] ~= suit_tallies['Clubs']) or
-        (mod_suit_tallies['Diamonds'] ~= suit_tallies['Diamonds']) or
-        (mod_suit_tallies['Stars'] ~= suit_tallies['Stars']) or
-        (mod_suit_tallies['Moons'] ~= suit_tallies['Moons'])
+    local modded = (face_tally ~= mod_face_tally)
+    for kk, vv in pairs(mod_suit_tallies) do
+        if vv ~= suit_tallies[kk] then modded = true end
+    end
 
     if wheel_flipped > 0 then flip_col = mix_colours(G.C.FILTER, G.C.WHITE, 0.7) end
 
@@ -820,6 +765,48 @@ function G.UIDEF.view_deck(unplayed_only)
         }
     end
 
+    local tally_ui = {
+        -- base cards
+        {
+            n = G.UIT.R,
+            config = { align = "cm", minh = 0.05, padding = 0.07 },
+            nodes = {
+                { n = G.UIT.O, config = { object = DynaText({ string = { { string = localize('k_base_cards'), colour = G.C.RED }, modded and { string = localize('k_effective'), colour = G.C.BLUE } or nil }, colours = { G.C.RED }, silent = true, scale = 0.4, pop_in_rate = 10, pop_delay = 4 }) } }
+            }
+        },
+        -- aces, faces and numbered cards
+        {
+            n = G.UIT.R,
+            config = { align = "cm", minh = 0.05, padding = 0.1 },
+            nodes = {
+                tally_sprite({ x = 1, y = 0 },
+                    { { string = '' .. ace_tally, colour = flip_col }, { string = '' .. mod_ace_tally, colour = G.C.BLUE } },
+                    { localize('k_aces') }), --Aces
+                tally_sprite({ x = 2, y = 0 },
+                    { { string = '' .. face_tally, colour = flip_col }, { string = '' .. mod_face_tally, colour = G.C.BLUE } },
+                    { localize('k_face_cards') }), --Face
+                tally_sprite({ x = 3, y = 0 },
+                    { { string = '' .. num_tally, colour = flip_col }, { string = '' .. mod_num_tally, colour = G.C.BLUE } },
+                    { localize('k_numbered_cards') }), --Numbers
+            }
+        },
+    }
+    -- add suit tallies
+    for i = 1, #G.SUITS, 2 do
+        local n = {
+            n = G.UIT.R,
+            config = { align = "cm", minh = 0.05, padding = 0.1 },
+            nodes = {
+                tally_sprite(G.tally_sprites[G.SUITS[i]],
+                    { { string = '' .. suit_tallies[G.SUITS[i]], colour = flip_col }, { string = '' .. mod_suit_tallies[G.SUITS[i]], colour = G.C.BLUE } },
+                    { localize(G.SUITS[i], 'suits_plural') }),
+                G.SUITS[i + 1] and tally_sprite(G.tally_sprites[G.SUITS[i + 1]],
+                    { { string = '' .. suit_tallies[G.SUITS[i + 1]], colour = flip_col }, { string = '' .. mod_suit_tallies[G.SUITS[i + 1]], colour = G.C.BLUE } },
+                    { localize(G.SUITS[i + 1], 'suits_plural') }) or nil,
+            }
+        }
+        table.insert(tally_ui, n)
+    end
 
     local t =
     {
@@ -870,66 +857,7 @@ function G.UIDEF.view_deck(unplayed_only)
                                     {
                                         n = G.UIT.R,
                                         config = { align = "cm", r = 0.1, outline_colour = G.C.L_BLACK, line_emboss = 0.05, outline = 1.5 },
-                                        nodes = {
-                                            {
-                                                n = G.UIT.R,
-                                                config = { align = "cm", minh = 0.05, padding = 0.07 },
-                                                nodes = {
-                                                    { n = G.UIT.O, config = { object = DynaText({ string = { { string = localize('k_base_cards'), colour = G.C.RED }, modded and { string = localize('k_effective'), colour = G.C.BLUE } or nil }, colours = { G.C.RED }, silent = true, scale = 0.4, pop_in_rate = 10, pop_delay = 4 }) } }
-                                                }
-                                            },
-                                            {
-                                                n = G.UIT.R,
-                                                config = { align = "cm", minh = 0.05, padding = 0.1 },
-                                                nodes = {
-                                                    tally_sprite({ x = 1, y = 0 },
-                                                        { { string = '' .. ace_tally, colour = flip_col }, { string = '' .. mod_ace_tally, colour = G.C.BLUE } },
-                                                        { localize('k_aces') }), --Aces
-                                                    tally_sprite({ x = 2, y = 0 },
-                                                        { { string = '' .. face_tally, colour = flip_col }, { string = '' .. mod_face_tally, colour = G.C.BLUE } },
-                                                        { localize('k_face_cards') }), --Face
-                                                    tally_sprite({ x = 3, y = 0 },
-                                                        { { string = '' .. num_tally, colour = flip_col }, { string = '' .. mod_num_tally, colour = G.C.BLUE } },
-                                                        { localize('k_numbered_cards') }), --Numbers
-                                                }
-                                            },
-                                            {
-                                                n = G.UIT.R,
-                                                config = { align = "cm", minh = 0.05, padding = 0.1 },
-                                                nodes = {
-                                                    tally_sprite({ x = 3, y = 1 },
-                                                        { { string = '' .. suit_tallies['Spades'], colour = flip_col }, { string = '' .. mod_suit_tallies['Spades'], colour = G.C.BLUE } },
-                                                        { localize('Spades', 'suits_plural') }),
-                                                    tally_sprite({ x = 0, y = 1 },
-                                                        { { string = '' .. suit_tallies['Hearts'], colour = flip_col }, { string = '' .. mod_suit_tallies['Hearts'], colour = G.C.BLUE } },
-                                                        { localize('Hearts', 'suits_plural') }),
-                                                }
-                                            },
-                                            {
-                                                n = G.UIT.R,
-                                                config = { align = "cm", minh = 0.05, padding = 0.1 },
-                                                nodes = {
-                                                    tally_sprite({ x = 2, y = 1 },
-                                                        { { string = '' .. suit_tallies['Clubs'], colour = flip_col }, { string = '' .. mod_suit_tallies['Clubs'], colour = G.C.BLUE } },
-                                                        { localize('Clubs', 'suits_plural') }),
-                                                    tally_sprite({ x = 1, y = 1 },
-                                                        { { string = '' .. suit_tallies['Diamonds'], colour = flip_col }, { string = '' .. mod_suit_tallies['Diamonds'], colour = G.C.BLUE } },
-                                                        { localize('Diamonds', 'suits_plural') }),
-                                                }
-                                            },
-                                            {
-                                                n = G.UIT.R,
-                                                config = { align = "cm", minh = 0.05, padding = 0.1 },
-                                                nodes = {
-                                                    tally_sprite({ x = 4, y = 1 },
-                                                        { { string = '' .. suit_tallies['Stars'], colour = flip_col }, { string = '' .. mod_suit_tallies['Stars'], colour = G.C.BLUE } },
-                                                        { localize('Stars', 'suits_plural') }),
-                                                    tally_sprite({ x = 5, y = 1 },
-                                                        { { string = '' .. suit_tallies['Moons'], colour = flip_col }, { string = '' .. mod_suit_tallies['Moons'], colour = G.C.BLUE } },
-                                                        { localize('Moons', 'suits_plural') }),
-                                                }
-                                            },
-                                        }
+                                        nodes = tally_ui
                                     }
                                 }
                             },
@@ -977,6 +905,7 @@ function G.UIDEF.view_deck(unplayed_only)
     return t
 end
 
+--! DO NOT MODIFY | recognizes suits from G.SUITS
 function G.UIDEF.deck_preview(args)
     local _minh, _minw = 0.35, 0.5
     local suit_labels = {}
@@ -1003,14 +932,10 @@ function G.UIDEF.deck_preview(args)
     local deck_tables = {}
     remove_nils(G.playing_cards)
     table.sort(G.playing_cards, function(a, b) return a:get_nominal('suit') > b:get_nominal('suit') end)
-    local SUITS = {
-        Spades = {},
-        Hearts = {},
-        Clubs = {},
-        Diamonds = {},
-        Stars = {},
-        Moons = {},
-    }
+    local SUITS = {}
+    for _, v in ipairs(G.SUITS) do
+        SUITS[v] = {}
+    end
 
     for k, v in pairs(SUITS) do
         for i = 1, 14 do
@@ -1018,7 +943,6 @@ function G.UIDEF.deck_preview(args)
         end
     end
 
-    local suit_map = { 'Spades', 'Hearts', 'Clubs', 'Diamonds', 'Stars', 'Moons' }
     local stones = nil
     local rank_name_mapping = { 'A', 'K', 'Q', 'J', '10', 9, 8, 7, 6, 5, 4, 3, 2 }
 
@@ -1098,18 +1022,18 @@ function G.UIDEF.deck_preview(args)
     end
     table.insert(deck_tables, { n = G.UIT.R, config = { align = "cm", padding = 0.04 }, nodes = _row })
 
-    for j = 1, 6 do
+    for j = 1, #G.SUITS do
         _row = {}
-        _bg_col = mix_colours(G.C.SUITS[suit_map[j]], G.C.L_BLACK, 0.7)
+        _bg_col = mix_colours(G.C.SUITS[G.SUITS[j]], G.C.L_BLACK, 0.7)
         for i = 14, 2, -1 do
-            local _tscale = #SUITS[suit_map[j]][i] > 0 and 0.3 or 0.25
-            local _colour = #SUITS[suit_map[j]][i] > 0 and flip_col or G.C.UI.TRANSPARENT_LIGHT
+            local _tscale = #SUITS[G.SUITS[j]][i] > 0 and 0.3 or 0.25
+            local _colour = #SUITS[G.SUITS[j]][i] > 0 and flip_col or G.C.UI.TRANSPARENT_LIGHT
 
             local _col = {
                 n = G.UIT.C,
                 config = { align = "cm", padding = 0.05, minw = _minw + 0.098, minh = _minh },
                 nodes = {
-                    { n = G.UIT.T, config = { text = '' .. #SUITS[suit_map[j]][i], colour = _colour, scale = _tscale, shadow = true, lang = G.LANGUAGES['en-us'] } },
+                    { n = G.UIT.T, config = { text = '' .. #SUITS[G.SUITS[j]][i], colour = _colour, scale = _tscale, shadow = true, lang = G.LANGUAGES['en-us'] } },
                 }
             }
             table.insert(_row, _col)
@@ -1118,11 +1042,9 @@ function G.UIDEF.deck_preview(args)
             { n = G.UIT.R, config = { align = "cm", r = 0.1, padding = 0.04, minh = 0.4, colour = _bg_col }, nodes = _row })
     end
 
-    for k, v in ipairs(suit_map) do
-        local _x = (v == 'Spades' and 3) or (v == 'Hearts' and 0) or (v == 'Clubs' and 2) or (v == 'Diamonds' and 1) or
-            (v == 'Stars' and 4) or (v == 'Moons' and 5)
+    for _, v in ipairs(G.SUITS) do
         local t_s = Sprite(0, 0, 0.3, 0.3, G.ASSET_ATLAS["ui_" .. (G.SETTINGS.colourblind_option and 2 or 1)],
-            { x = _x, y = 1 })
+            G.tally_sprites[v])
         t_s.states.drag.can = false
         t_s.states.hover.can = false
         t_s.states.collide.can = false
@@ -1228,13 +1150,16 @@ end
 
 Game.start_run_six_suit_ref = Game.start_run
 function Game:start_run(args)
-    if (not args.challenge or not args.challenge.deck) and (not G.six_suits) then
-        args.challenge = args.challenge or {}
-        args.challenge.deck = {
-            no_suits = { R = true, M = true }
-        }
+    args.challenge = args.challenge or { deck = {} }
+    if not args.challenge.deck and not G.six_suits then
+        args.challenge.deck.yes_suits = { H = true, D = true, C = true, S = true }
     elseif not G.six_suits then
-        args.challenge.deck.no_suits = { R = true, M = true }
+        args.challenge.deck.yes_suits = { H = true, D = true, C = true, S = true }
+    else
+        args.challenge.deck.yes_suits = {}
+        for _, v in ipairs(G.SUITS) do
+            args.challenge.deck.yes_suits[G.SUIT_TABLE[v]] = true
+        end
     end
     self:start_run_six_suit_ref(args)
 end
@@ -1243,10 +1168,9 @@ Blind.set_blind_ref = Blind.set_blind
 function Blind:set_blind(blind, reset, silent)
     self:set_blind_ref(blind, reset, silent)
     if (self.name == "The Eye") and not reset then
-        self.hands["Spectrum"] = false
-        self.hands["Straight Spectrum"] = false
-        self.hands["Spectrum House"] = false
-        self.hands["Spectrum Five"] = false
+        for _, v in ipairs(G.handlist) do
+            self.hands[v] = false
+        end
     end
 end
 
