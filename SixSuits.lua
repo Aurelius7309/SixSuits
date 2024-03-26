@@ -2,29 +2,31 @@
 --- MOD_NAME: Six Suits
 --- MOD_ID: SixSuits
 --- MOD_AUTHOR: [Aure, CrimsonHeart]
---- MOD_DESCRIPTION: This mod adds the Spectrum hand, for use with two new suits: Stars and Moons. 
+--- MOD_DESCRIPTION: This mod adds the Spectrum hand, for use with two new suits: Stars and Moons.
 
 ----------------------------------------------
 ------------MOD CODE -------------------------
 function SMODS.INIT.SixSuit()
     local six_suit_mod = SMODS.findModByID('SixSuits')
     local sprite_cards_1 = SMODS.Sprite:new('six_suit_cards_1', six_suit_mod.path, '8BitDeck.png', 71, 95, 'asset_atli')
-    local sprite_cards_2 = SMODS.Sprite:new('six_suit_cards_2', six_suit_mod.path, '8BitDeck_opt2.png', 71, 95, 'asset_atli')
+    local sprite_cards_2 = SMODS.Sprite:new('six_suit_cards_2', six_suit_mod.path, '8BitDeck_opt2.png', 71, 95,
+        'asset_atli')
     local sprite_ui_1 = SMODS.Sprite:new('six_suit_ui_1', six_suit_mod.path, 'ui_assets.png', 18, 18, 'asset_atli')
     local sprite_ui_2 = SMODS.Sprite:new('six_suit_ui_2', six_suit_mod.path, 'ui_assets_opt2.png', 18, 18, 'asset_atli')
     local sprite_tarot = SMODS.Sprite:new('six_suit_Tarot', six_suit_mod.path, 'Tarots.png', 71, 95, 'asset_atli')
+    local sprite_joker = SMODS.Sprite:new('six_suit_jokers', six_suit_mod.path, 'Jokers.png', 71, 95, 'asset_atli')
     sprite_cards_1:register()
     sprite_cards_2:register()
     sprite_ui_1:register()
     sprite_ui_2:register()
     sprite_tarot:register()
+    sprite_joker:register()
     -- function SMODS.Card:new_suit(name, card_atlas_low_contrast, card_atlas_high_contrast, card_pos, ui_atlas_low_contrast, ui_atlas_high_contrast, ui_pos, colour_low_contrast, colour_high_contrast)
     SMODS.Card:new_suit('Moons', 'six_suit_cards_1', 'six_suit_cards_2', { y = 1 }, 'six_suit_ui_1', 'six_suit_ui_2',
         { x = 1, y = 0 }, '696076', '696076')
     SMODS.Card:new_suit('Stars', 'six_suit_cards_1', 'six_suit_cards_2', { y = 0 }, 'six_suit_ui_1', 'six_suit_ui_2',
         { x = 0, y = 0 }, 'DF509F', 'DF509F')
-    
-        --[[
+    --[[
     SMODS.Card:new_rank('Fake Ace', 100, 'six_suit_cards_1', 'six_suit_cards_2', { x = 12 }, {
         Hearts = { y = 0 },
         Clubs = { y = 1 },
@@ -40,7 +42,7 @@ function SMODS.INIT.SixSuit()
     SMODS.Card.RANKS['7'].next = { '9', '8' }
     SMODS.Card.RANKS['7'].strength_effect = { random = true }
     SMODS.Card.RANKS['Ace'].strength_effect = { ignore = true }
-    ]]
+    --]]
     G.localization.misc['poker_hands']['Spectrum'] = 'Spectrum'
     G.localization.misc['poker_hands']['Straight Spectrum'] = 'Straight Spectrum'
     G.localization.misc['poker_hands']['Royal Spectrum'] = 'Royal Spectrum'
@@ -65,6 +67,7 @@ function SMODS.INIT.SixSuit()
         [1] = '5 cards with the same rank,',
         [2] = 'each with a different suit'
     }
+    G.localization.misc.dictionary['k_glass'] = 'Glass'
     G.six_suits = false
 
     --* add hands to handlist
@@ -81,7 +84,12 @@ function SMODS.INIT.SixSuit()
         table.insert(G.handlist, i + j, hand)
         j = j + 1
     end
-
+    local planet_loc_text = {
+        [1] = '{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up',
+        [2] = '{C:attention}#2#',
+        [3] = '{C:mult}+#3#{} Mult and',
+        [4] = '{C:chips}+#4#{} chips',
+    }
     local planets = {
         c_gj_273_c = {
             order = 13,
@@ -144,12 +152,6 @@ function SMODS.INIT.SixSuit()
         c_inv_star = { order = 23, discovered = false, cost = 3, consumeable = true, name = "The Star", pos = { x = 2, y = 1 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Stars', max_highlighted = 3 }, atlas = 'six_suit_Tarot' },
         c_inv_moon = { order = 24, discovered = false, cost = 3, consumeable = true, name = "The Moon", pos = { x = 1, y = 1 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Moons', max_highlighted = 3 }, atlas = 'six_suit_Tarot' },
     }
-    local planet_loc_text = {
-        [1] = '{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up',
-        [2] = '{C:attention}#2#',
-        [3] = '{C:mult}+#3#{} Mult and',
-        [4] = '{C:chips}+#4#{} chips',
-    }
     local planet_loc = {}
     local tarot_loc = {
         c_inv_star = {
@@ -184,52 +186,227 @@ function SMODS.INIT.SixSuit()
         table.insert(G.P_CENTER_POOLS['Tarot'], v)
         G.localization.descriptions.Tarot[k] = tarot_loc[k]
     end
---#region SAVE_CONSUMABLES
     table.sort(G.P_CENTER_POOLS['Planet'], function(a, b) return a.order < b.order end)
     table.sort(G.P_CENTER_POOLS['Tarot'], function(a, b) return a.order < b.order end)
-    -------------------------------------
-    local TESTHELPER_unlocks = false and not _RELEASE_MODE
-    -------------------------------------
-    if not love.filesystem.getInfo(G.SETTINGS.profile .. '') then
-        love.filesystem.createDirectory(G.SETTINGS.profile ..
-            '')
-    end
-    if not love.filesystem.getInfo(G.SETTINGS.profile .. '/' .. 'meta.jkr') then
-        love.filesystem.append(
-            G.SETTINGS.profile .. '/' .. 'meta.jkr', 'return {}')
-    end
+    function save_meta_six_suits()
+        -------------------------------------
+        local TESTHELPER_unlocks = false and not _RELEASE_MODE
+        -------------------------------------
+        if not love.filesystem.getInfo(G.SETTINGS.profile .. '') then
+            love.filesystem.createDirectory(G.SETTINGS.profile ..
+                '')
+        end
+        if not love.filesystem.getInfo(G.SETTINGS.profile .. '/' .. 'meta.jkr') then
+            love.filesystem.append(
+                G.SETTINGS.profile .. '/' .. 'meta.jkr', 'return {}')
+        end
 
-    convert_save_to_meta()
+        convert_save_to_meta()
 
-    local meta = STR_UNPACK(get_compressed(G.SETTINGS.profile .. '/' .. 'meta.jkr') or 'return {}')
-    meta.unlocked = meta.unlocked or {}
-    meta.discovered = meta.discovered or {}
-    meta.alerted = meta.alerted or {}
+        local meta = STR_UNPACK(get_compressed(G.SETTINGS.profile .. '/' .. 'meta.jkr') or 'return {}')
+        meta.unlocked = meta.unlocked or {}
+        meta.discovered = meta.discovered or {}
+        meta.alerted = meta.alerted or {}
 
-    for k, v in pairs(G.P_CENTERS) do
-        if not v.wip and not v.demo then
-            if TESTHELPER_unlocks then
-                v.unlocked = true; v.discovered = true; v.alerted = true
-            end --REMOVE THIS
-            if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) and meta.unlocked[k] then
-                v.unlocked = true
-            end
-            if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) then
-                G.P_LOCKED[#G.P_LOCKED + 1] =
-                    v
-            end
-            if not v.discovered and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^e_') or string.find(k, '^c_') or string.find(k, '^p_') or string.find(k, '^v_')) and meta.discovered[k] then
-                v.discovered = true
-            end
-            if v.discovered and meta.alerted[k] or v.set == 'Back' or v.start_alerted then
-                v.alerted = true
-            elseif v.discovered then
-                v.alerted = false
+        for k, v in pairs(G.P_CENTERS) do
+            if not v.wip and not v.demo then
+                if TESTHELPER_unlocks then
+                    v.unlocked = true; v.discovered = true; v.alerted = true
+                end --REMOVE THIS
+                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) and meta.unlocked[k] then
+                    v.unlocked = true
+                end
+                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) then
+                    G.P_LOCKED[#G.P_LOCKED + 1] =
+                        v
+                end
+                if not v.discovered and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^e_') or string.find(k, '^c_') or string.find(k, '^p_') or string.find(k, '^v_')) and meta.discovered[k] then
+                    v.discovered = true
+                end
+                if v.discovered and meta.alerted[k] or v.set == 'Back' or v.start_alerted then
+                    v.alerted = true
+                elseif v.discovered then
+                    v.alerted = false
+                end
             end
         end
     end
---#endregion
 
+    save_meta_six_suits()
+
+    local init_item_prototypes_ref = Game.init_item_prototypes
+    function Game:init_item_prototypes()
+        local P_CENTERS = self.P_CENTERS
+        local P_CENTER_POOLS = self.P_CENTER_POOLS
+        init_item_prototypes_ref(self)
+        if P_CENTERS then self.P_CENTERS = P_CENTERS end
+        if P_CENTER_POOLS then self.P_CENTER_POOLS = P_CENTER_POOLS end
+        save_meta_six_suits()
+    end
+
+    local j_envious_joker = SMODS.Joker:new('Envious Joker', 'envious_joker', { extra = { s_mult = 4, suit = 'Stars' } },
+        { x = 0, y = 0 }, {
+            name = 'Envious Joker',
+            text = {
+                [1] = 'Played cards with',
+                [2] = '{C:stars}#2#{} suit give',
+                [3] = '{C:mult}+#1#{} Mult when scored'
+            }
+        }, 1, 5, true, false, true, true, 'Suit Mult', 'six_suit_jokers')
+    local j_slothful_joker = SMODS.Joker:new('Slothful Joker', 'slothful_joker',
+        { extra = { s_mult = 4, suit = 'Moons' } },
+        { x = 1, y = 0 }, {
+            name = 'Slothful Joker',
+            text = {
+                [1] = 'Played cards with',
+                [2] = '{C:moons}#2#{} suit give',
+                [3] = '{C:mult}+#1#{} Mult when scored'
+            }
+        }, 1, 5, true, false, true, true, 'Suit Mult', 'six_suit_jokers')
+    local j_star_ruby = SMODS.Joker:new('Star Ruby', 'star_ruby', { extra = { odds = 10 } },
+        { x = 2, y = 0 }, {
+            name = 'Star Ruby',
+            text = {
+                [1] = '{C:green}#1# in #2#{} chance for',
+                [2] = 'played cards with {C:stars}Star{} suit',
+                [3] = 'to create a random {C:spectral}Spectral{}',
+                [4] = 'card when scored'
+            }
+        }, 2, 7, true, false, true, true, nil, 'six_suit_jokers')
+    local j_rainbow_moonstone = SMODS.Joker:new('Rainbow Moonstone', 'rainbow_moonstone', { extra = { odds = 2 } },
+        { x = 3, y = 0 }, {
+            name = 'Rainbow Moonstone',
+            text = {
+                [1] = '{C:green}#1# in #2#{} chance for',
+                [2] = 'played cards with {C:moons}Moon{} suit',
+                [3] = 'to become {C:attention}Glass{} Cards'
+            }
+        }, 2, 7, true, false, true, true, nil, 'six_suit_jokers')
+    local j_clan = SMODS.Joker:new('The Clan', 'clan', {Xmult = 2, type = 'Spectrum'}, 
+        {x = 0, y = 1}, {
+            name = 'The Clan',
+            text = {
+                [1] = '{X:mult,C:white} X#1# {} Mult if played',
+                [2] = 'hand contains',
+                [3] = 'a {C:attention}#2#'
+            }
+        }, 3, 8, true, false, true, true, nil, 'six_suit_jokers')
+    local j_manic_joker = SMODS.Joker:new('Manic Joker', 'manic_joker', { t_mult = 10, type = 'Spectrum' },
+        { x = 1, y = 1 }, {
+            name = 'Manic Joker',
+            text = {
+                [1] = '{C:red}+#1#{} Mult if played',
+                [2] = 'hand contains',
+                [3] = 'a {C:attention}#2#'
+            }
+        }, 1, 4, true, false, true, true, 'Type Mult', 'six_suit_jokers')
+    local j_wicked_joker = SMODS.Joker:new('Wicked Joker', 'wicked_joker', { t_chips = 80, type = 'Spectrum' },
+        { x = 2, y = 1 }, {
+            name = 'Wicked Joker',
+            text = {
+                [1] = '{C:chips}+#1#{} Chips if played',
+                [2] = 'hand contains',
+                [3] = 'a {C:attention}#2#'
+            }
+        }, 1, 4, true, false, true, true, nil, 'six_suit_jokers')
+    j_envious_joker:register()
+    j_slothful_joker:register()
+    j_star_ruby:register()
+    j_rainbow_moonstone:register()
+    j_clan:register()
+    j_manic_joker:register()
+    j_wicked_joker:register()
+    function SMODS.Jokers.j_envious_joker:loc_def(card)
+        if card.ability.name == 'Envious Joker' then
+            return { card.ability.extra.s_mult, localize(card.ability.extra.suit, 'suits_singular') }
+        end
+    end
+
+    function SMODS.Jokers.j_slothful_joker:loc_def(card)
+        if card.ability.name == 'Slothful Joker' then
+            return { card.ability.extra.s_mult, localize(card.ability.extra.suit, 'suits_singular') }
+        end
+    end
+
+    function SMODS.Jokers.j_star_ruby:loc_def(card)
+        if (card.ability.name == 'Star Ruby') then
+            return { '' .. (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.odds }
+        end
+    end
+
+    function SMODS.Jokers.j_rainbow_moonstone:loc_def(card)
+        if (card.ability.name == 'Rainbow Moonstone') then
+            return { '' .. (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.odds }
+        end
+    end
+
+    function SMODS.Jokers.j_clan:loc_def(card)
+        if card.ability.name == 'The Clan' then
+            return { card.ability.x_mult, localize(card.ability.type, 'poker_hands') }
+        end
+    end
+
+    function SMODS.Jokers.j_manic_joker:loc_def(card)
+        if card.ability.name == 'Manic Joker' then
+            return {card.ability.t_mult, localize(card.ability.type, 'poker_hands')}
+        end
+    end
+    
+    function SMODS.Jokers.j_wicked_joker:loc_def(card)
+        if card.ability.name == 'Wicked Joker' then
+            return {card.ability.t_chips, localize(card.ability.type, 'poker_hands')}
+        end
+    end
+
+    function SMODS.Jokers.j_star_ruby.calculate(card, context)
+        if context.individual and
+            context.cardarea == G.play and
+            (card.ability.name == 'Star Ruby') and
+            context.other_card:is_suit('Stars') and
+            #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit and
+            pseudorandom('starruby') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
+            G.E_MANAGER:add_event(Event({
+                trigger = 'before',
+                delay = 0.0,
+                func = (function()
+                    local _card = create_card('Spectral', G.consumeables, nil, nil, nil, nil, nil, 'ruby')
+                    _card:add_to_deck()
+                    G.consumeables:emplace(_card)
+                    G.GAME.consumeable_buffer = 0
+                    return true
+                end)
+            }))
+            card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil,
+                { message = localize('k_plus_spectral'), colour = G.C.SECONDARY_SET.Spectral })
+            return {}
+        end
+    end
+
+    function SMODS.Jokers.j_rainbow_moonstone.calculate(card, context)
+        if (card.ability.name == 'Rainbow Moonstone') and context.before and (context.cardarea == G.jokers) then
+            local moons = {}
+            for _, v in ipairs(context.full_hand) do
+                if v:is_suit('Moons') and not (v.ability.name == 'Glass Card') and pseudorandom('moonstone') < G.GAME.probabilities.normal / card.ability.extra.odds then
+                    moons[#moons + 1] = v
+                    v:set_ability(G.P_CENTERS.m_glass, nil, true)
+                    G.E_MANAGER:add_event(Event({
+                        func = function()
+                            v:juice_up()
+                            return true
+                        end
+                    }))
+                end
+            end
+            if #moons > 0 then
+                return {
+                    message = localize('k_glass'),
+                    colour = G.C.SECONDARY_SET.Enhanced,
+                    card = context.blueprint_card or card
+                }
+            end
+        end
+    end
 
     local init_game_object_six_suit_ref = Game.init_game_object
     function Game:init_game_object()
