@@ -15,12 +15,15 @@ function SMODS.INIT.SixSuit()
     local sprite_ui_2 = SMODS.Sprite:new('six_suit_ui_2', six_suit_mod.path, 'ui_assets_opt2.png', 18, 18, 'asset_atli')
     local sprite_tarot = SMODS.Sprite:new('six_suit_Tarot', six_suit_mod.path, 'Tarots.png', 71, 95, 'asset_atli')
     local sprite_joker = SMODS.Sprite:new('six_suit_jokers', six_suit_mod.path, 'Jokers.png', 71, 95, 'asset_atli')
+    local sprite_blinds = SMODS.Sprite:new('six_suit_Blinds', six_suit_mod.path, 'BlindChips.png', 34, 34,
+        'animation_atli', 21)
     sprite_cards_1:register()
     sprite_cards_2:register()
     sprite_ui_1:register()
     sprite_ui_2:register()
     sprite_tarot:register()
     sprite_joker:register()
+    sprite_blinds:register()
     -- function SMODS.Card:new_suit(name, card_atlas_low_contrast, card_atlas_high_contrast, card_pos, ui_atlas_low_contrast, ui_atlas_high_contrast, ui_pos, colour_low_contrast, colour_high_contrast)
     SMODS.Card:new_suit('Moons', 'six_suit_cards_1', 'six_suit_cards_2', { y = 1 }, 'six_suit_ui_1', 'six_suit_ui_2',
         { x = 1, y = 0 }, '696076', '696076')
@@ -84,164 +87,125 @@ function SMODS.INIT.SixSuit()
         table.insert(G.handlist, i + j, hand)
         j = j + 1
     end
-    local planet_loc_text = {
-        [1] = '{S:0.8}({S:0.8,V:1}lvl.#1#{S:0.8}){} Level up',
-        [2] = '{C:attention}#2#',
-        [3] = '{C:mult}+#3#{} Mult and',
-        [4] = '{C:chips}+#4#{} chips',
+
+    local c_gj_273_c = SMODS.Planet:new('GJ 273 c', 'gj_273_c', { hand_type = 'Spectrum' }, { x = 0, y = 0 }, nil, 3, 1,
+        nil, 1, true, false, 'six_suit_Tarot')
+    local c_trappist = SMODS.Planet:new('Trappist', 'trappist', { hand_type = 'Straight Spectrum' }, { x = 1, y = 0 },
+        nil, 3, 1, nil, 1, true, false, 'six_suit_Tarot')
+    local c_kepler = SMODS.Planet:new('Kepler', 'kepler', { hand_type = 'Spectrum House', softlock = true },
+        { x = 2, y = 0 }, nil, 3, 1,
+        nil, 1, true, false, 'six_suit_Tarot')
+    local c_proxima = SMODS.Planet:new('Proxima', 'proxima', { hand_type = 'Spectrum Five', softlock = true },
+        { x = 3, y = 0 }, nil, 3, 1, nil, 1, true, false, 'six_suit_Tarot')
+    c_gj_273_c:register()
+    c_trappist:register()
+    c_kepler:register()
+    c_proxima:register()
+
+    local tarot_loc_text = {
+        [1] = 'Converts up to',
+        [2] = '{C:attention}#1#{} selected cards',
+        [3] = 'to {V:1}#2#{}',
     }
-    local planets = {
-        c_gj_273_c = {
-            order = 13,
-            discovered = false,
-            cost = 3,
-            consumeable = true,
-            freq = 1,
-            name = 'GJ 273 c',
-            pos = { x = 0, y = 0 },
-            set = 'Planet',
-            effect = 'Hand Upgrade',
-            cost_mult = 1.0,
-            config = { hand_type = 'Spectrum' },
-            atlas = 'six_suit_Tarot'
-        },
-        c_trappist = {
-            order = 14,
-            discovered = false,
-            cost = 3,
-            consumeable = true,
-            freq = 1,
-            name = 'Trappist',
-            pos = { x = 1, y = 0 },
-            set = 'Planet',
-            effect = 'Hand Upgrade',
-            cost_mult = 1.0,
-            config = { hand_type = 'Straight Spectrum' },
-            atlas = 'six_suit_Tarot'
-        },
-        c_kepler = {
-            order = 15,
-            discovered = false,
-            cost = 3,
-            consumeable = true,
-            freq = 1,
-            name = 'Kepler',
-            pos = { x = 2, y = 0 },
-            set = 'Planet',
-            effect = 'Hand Upgrade',
-            cost_mult = 1.0,
-            config = { hand_type = 'Spectrum House', softlock = true },
-            atlas = 'six_suit_Tarot'
-        },
-        c_proxima = {
-            order = 16,
-            discovered = false,
-            cost = 3,
-            consumeable = true,
-            freq = 1,
-            name = 'Proxima',
-            pos = { x = 3, y = 0 },
-            set = 'Planet',
-            effect = 'Hand Upgrade',
-            cost_mult = 1.0,
-            config = { hand_type = 'Spectrum Five', softlock = true },
-            atlas = 'six_suit_Tarot'
-        }
-    }
-    local tarots = {
-        c_inv_star = { order = 23, discovered = false, cost = 3, consumeable = true, name = "The Star", pos = { x = 2, y = 1 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Stars', max_highlighted = 3 }, atlas = 'six_suit_Tarot' },
-        c_inv_moon = { order = 24, discovered = false, cost = 3, consumeable = true, name = "The Moon", pos = { x = 1, y = 1 }, set = "Tarot", effect = "Suit Conversion", cost_mult = 1.0, config = { suit_conv = 'Moons', max_highlighted = 3 }, atlas = 'six_suit_Tarot' },
-    }
-    local planet_loc = {}
-    local tarot_loc = {
-        c_inv_star = {
-            name = "The Star",
-            text = {
-                [1] = 'Converts up to',
-                [2] = '{C:attention}#1#{} selected cards',
-                [3] = 'to {V:1}#2#{}',
-            }
-        },
-        c_inv_moon = {
-            name = "The Moon",
-            text = {
-                [1] = 'Converts up to',
-                [2] = '{C:attention}#1#{} selected cards',
-                [3] = 'to {V:1}#2#{}',
-            }
-        }
-    }
-    for k, v in pairs(planets) do
-        v.key = k
-        --v.order = table_length(G.P_CENTER_POOLS['Planet']) + 1
-        G.P_CENTERS[k] = v
-        table.insert(G.P_CENTER_POOLS['Planet'], v)
-        planet_loc[k] = { name = v.name, text = planet_loc_text }
-        G.localization.descriptions.Planet[k] = planet_loc[k]
+    local c_inv_star = SMODS.Tarot:new('The Star?', 'inv_star', { suit_conv = 'Stars', max_highlighted = 3 },
+        { x = 2, y = 1 },
+        { name = 'The Star?', text = tarot_loc_text }, 3, 1, 'Suit Conversion', true, false, 'six_suit_Tarot')
+    local c_inv_moon = SMODS.Tarot:new('The Moon?', 'inv_moon', { suit_conv = 'Moons', max_highlighted = 3 },
+        { x = 1, y = 1 },
+        { name = 'The Moon?', text = tarot_loc_text }, 3, 1, 'Suit Conversion', true, false, 'six_suit_Tarot')
+    c_inv_star:register()
+    c_inv_moon:register()
+
+    function SMODS.Tarots.c_inv_star.loc_def(_c)
+        return { _c.config.max_highlighted, localize(_c.config.suit_conv, 'suits_plural'), colours = { G.C.SUITS[_c.config.suit_conv] } }
     end
-    for k, v in pairs(tarots) do
-        v.key = k
-        --v.order = table_length(G.P_CENTER_POOLS['Tarot']) + 1
-        G.P_CENTERS[k] = v
-        table.insert(G.P_CENTER_POOLS['Tarot'], v)
-        G.localization.descriptions.Tarot[k] = tarot_loc[k]
+
+    function SMODS.Tarots.c_inv_moon.loc_def(_c)
+        return { _c.config.max_highlighted, localize(_c.config.suit_conv, 'suits_plural'), colours = { G.C.SUITS[_c.config.suit_conv] } }
     end
-    table.sort(G.P_CENTER_POOLS['Planet'], function(a, b) return a.order < b.order end)
-    table.sort(G.P_CENTER_POOLS['Tarot'], function(a, b) return a.order < b.order end)
-    function save_meta_six_suits()
-        -------------------------------------
-        local TESTHELPER_unlocks = false and not _RELEASE_MODE
-        -------------------------------------
-        if not love.filesystem.getInfo(G.SETTINGS.profile .. '') then
-            love.filesystem.createDirectory(G.SETTINGS.profile ..
-                '')
+
+    local c_inv_fool = SMODS.Spectral:new('The Fool?', 'inv_fool', {}, { x = 9, y = 2 }, {
+        name = 'The Fool?',
+        text = {
+            [1] = 'Creates the last',
+            [2] = '{C:spectral}Spectral{} card',
+            [3] = 'used during this run',
+            [4] = '{s:0.8,C:spectral}The Fool?{s:0.8} excluded'
+        }
+    }, 4, true, false, 'six_suit_Tarot')
+    c_inv_fool:register()
+
+    local set_c_usage_ref = set_consumeable_usage
+    function set_consumeable_usage(card)
+        if card.config.center_key and card.ability.consumeable and card.config.center.set == 'Spectral' then
+            G.E_MANAGER:add_event(Event({
+                trigger = 'immediate',
+                func = function()
+                    G.E_MANAGER:add_event(Event({
+                        trigger = 'immediate',
+                        func = function()
+                            G.GAME.last_spectral = card.config.center_key
+                            return true
+                        end
+                    }))
+                    return true
+                end
+            }))
         end
-        if not love.filesystem.getInfo(G.SETTINGS.profile .. '/' .. 'meta.jkr') then
-            love.filesystem.append(
-                G.SETTINGS.profile .. '/' .. 'meta.jkr', 'return {}')
-        end
+        return set_c_usage_ref(card)
+    end
 
-        convert_save_to_meta()
-
-        local meta = STR_UNPACK(get_compressed(G.SETTINGS.profile .. '/' .. 'meta.jkr') or 'return {}')
-        meta.unlocked = meta.unlocked or {}
-        meta.discovered = meta.discovered or {}
-        meta.alerted = meta.alerted or {}
-
-        for k, v in pairs(G.P_CENTERS) do
-            if not v.wip and not v.demo then
-                if TESTHELPER_unlocks then
-                    v.unlocked = true; v.discovered = true; v.alerted = true
-                end --REMOVE THIS
-                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) and meta.unlocked[k] then
-                    v.unlocked = true
+    function SMODS.Spectrals.c_inv_fool.use(card, area, copier)
+        local used_tarot = copier or card
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            delay = 0.4,
+            func = function()
+                if G.consumeables.config.card_limit > #G.consumeables.cards then
+                    play_sound('timpani')
+                    local card = create_card('Spectral', G.consumeables, nil, nil, nil, nil, G.GAME.last_spectral,
+                        'inv_fool')
+                    card:add_to_deck()
+                    G.consumeables:emplace(card)
+                    used_tarot:juice_up(0.3, 0.5)
                 end
-                if not v.unlocked and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^v_')) then
-                    G.P_LOCKED[#G.P_LOCKED + 1] =
-                        v
-                end
-                if not v.discovered and (string.find(k, '^j_') or string.find(k, '^b_') or string.find(k, '^e_') or string.find(k, '^c_') or string.find(k, '^p_') or string.find(k, '^v_')) and meta.discovered[k] then
-                    v.discovered = true
-                end
-                if v.discovered and meta.alerted[k] or v.set == 'Back' or v.start_alerted then
-                    v.alerted = true
-                elseif v.discovered then
-                    v.alerted = false
-                end
+                return true
             end
+        }))
+        delay(0.6)
+    end
+
+    function SMODS.Spectrals.c_inv_fool.can_use(card)
+        if (#G.consumeables.cards < G.consumeables.config.card_limit or card.area == G.consumeables)
+            and G.GAME.last_spectral and G.GAME.last_spectral ~= 'c_inv_fool' then
+            return true
         end
     end
 
-    save_meta_six_suits()
-
-    local init_item_prototypes_ref = Game.init_item_prototypes
-    function Game:init_item_prototypes()
-        local P_CENTERS = self.P_CENTERS
-        local P_CENTER_POOLS = self.P_CENTER_POOLS
-        init_item_prototypes_ref(self)
-        if P_CENTERS then self.P_CENTERS = P_CENTERS end
-        if P_CENTER_POOLS then self.P_CENTER_POOLS = P_CENTER_POOLS end
-        save_meta_six_suits()
+    function SMODS.Spectrals.c_inv_fool.loc_def(card, info_queue)
+        local fool_c = G.GAME.last_spectral and G.P_CENTERS[G.GAME.last_spectral] or nil
+        local last_spectral = fool_c and localize { type = 'name_text', key = fool_c.key, set = fool_c.set } or
+            localize('k_none')
+        local colour = (not fool_c or fool_c.name == 'The Fool?') and G.C.RED or G.C.GREEN
+        local main_end = {
+            {
+                n = G.UIT.C,
+                config = { align = "bm", padding = 0.02 },
+                nodes = {
+                    {
+                        n = G.UIT.C,
+                        config = { align = "m", colour = colour, r = 0.05, padding = 0.05 },
+                        nodes = {
+                            { n = G.UIT.T, config = { text = ' ' .. last_spectral .. ' ', colour = G.C.UI.TEXT_LIGHT, scale = 0.3, shadow = true } },
+                        }
+                    }
+                }
+            }
+        }
+        if not (not fool_c or fool_c.name == 'The Fool?') then
+            info_queue[#info_queue + 1] = fool_c
+        end
+        return { last_spectral }, main_end
     end
 
     local j_envious_joker = SMODS.Joker:new('Envious Joker', 'envious_joker', { extra = { s_mult = 4, suit = 'Stars' } },
@@ -282,8 +246,8 @@ function SMODS.INIT.SixSuit()
                 [3] = 'to become {C:attention}Glass{} Cards'
             }
         }, 2, 7, true, false, true, true, nil, 'six_suit_jokers')
-    local j_clan = SMODS.Joker:new('The Clan', 'clan', {Xmult = 2, type = 'Spectrum'}, 
-        {x = 0, y = 1}, {
+    local j_clan = SMODS.Joker:new('The Clan', 'clan', { Xmult = 2, type = 'Spectrum' },
+        { x = 0, y = 1 }, {
             name = 'The Clan',
             text = {
                 [1] = '{X:mult,C:white} X#1# {} Mult if played',
@@ -316,52 +280,37 @@ function SMODS.INIT.SixSuit()
     j_clan:register()
     j_manic_joker:register()
     j_wicked_joker:register()
-    function SMODS.Jokers.j_envious_joker:loc_def(card)
-        if card.ability.name == 'Envious Joker' then
-            return { card.ability.extra.s_mult, localize(card.ability.extra.suit, 'suits_singular') }
-        end
+    function SMODS.Jokers.j_envious_joker.loc_def(card)
+        return { card.ability.extra.s_mult, localize(card.ability.extra.suit, 'suits_singular') }
     end
 
-    function SMODS.Jokers.j_slothful_joker:loc_def(card)
-        if card.ability.name == 'Slothful Joker' then
-            return { card.ability.extra.s_mult, localize(card.ability.extra.suit, 'suits_singular') }
-        end
+    function SMODS.Jokers.j_slothful_joker.loc_def(card)
+        return { card.ability.extra.s_mult, localize(card.ability.extra.suit, 'suits_singular') }
     end
 
-    function SMODS.Jokers.j_star_ruby:loc_def(card)
-        if (card.ability.name == 'Star Ruby') then
-            return { '' .. (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.odds }
-        end
+    function SMODS.Jokers.j_star_ruby.loc_def(card)
+        return { '' .. (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.odds }
     end
 
-    function SMODS.Jokers.j_rainbow_moonstone:loc_def(card)
-        if (card.ability.name == 'Rainbow Moonstone') then
-            return { '' .. (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.odds }
-        end
+    function SMODS.Jokers.j_rainbow_moonstone.loc_def(card)
+        return { '' .. (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.odds }
     end
 
-    function SMODS.Jokers.j_clan:loc_def(card)
-        if card.ability.name == 'The Clan' then
-            return { card.ability.x_mult, localize(card.ability.type, 'poker_hands') }
-        end
+    function SMODS.Jokers.j_clan.loc_def(card)
+        return { card.ability.x_mult, localize(card.ability.type, 'poker_hands') }
     end
 
-    function SMODS.Jokers.j_manic_joker:loc_def(card)
-        if card.ability.name == 'Manic Joker' then
-            return {card.ability.t_mult, localize(card.ability.type, 'poker_hands')}
-        end
+    function SMODS.Jokers.j_manic_joker.loc_def(card)
+        return { card.ability.t_mult, localize(card.ability.type, 'poker_hands') }
     end
-    
-    function SMODS.Jokers.j_wicked_joker:loc_def(card)
-        if card.ability.name == 'Wicked Joker' then
-            return {card.ability.t_chips, localize(card.ability.type, 'poker_hands')}
-        end
+
+    function SMODS.Jokers.j_wicked_joker.loc_def(card)
+        return { card.ability.t_chips, localize(card.ability.type, 'poker_hands') }
     end
 
     function SMODS.Jokers.j_star_ruby.calculate(card, context)
         if context.individual and
             context.cardarea == G.play and
-            (card.ability.name == 'Star Ruby') and
             context.other_card:is_suit('Stars') and
             #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit and
             pseudorandom('starruby') < G.GAME.probabilities.normal / card.ability.extra.odds then
@@ -384,7 +333,7 @@ function SMODS.INIT.SixSuit()
     end
 
     function SMODS.Jokers.j_rainbow_moonstone.calculate(card, context)
-        if (card.ability.name == 'Rainbow Moonstone') and context.before and (context.cardarea == G.jokers) then
+        if context.before and (context.cardarea == G.jokers) then
             local moons = {}
             for _, v in ipairs(context.full_hand) do
                 if v:is_suit('Moons') and not (v.ability.name == 'Glass Card') and pseudorandom('moonstone') < G.GAME.probabilities.normal / card.ability.extra.odds then
@@ -408,6 +357,24 @@ function SMODS.INIT.SixSuit()
         end
     end
 
+    local bl_eclipse = SMODS.Blind:new('The Eclipse', 'eclipse', {
+            name = 'The Eclipse',
+            text = {
+                [1] = 'All Moon cards',
+                [2] = 'are debuffed'
+            }
+        }, 5, 2, {}, { suit = 'Moons' }, { x = 0, y = 0 }, { min = 1, max = 10 }, G.C.SUITS['Moons'], false,
+        'six_suit_Blinds')
+    local bl_void = SMODS.Blind:new('The Void', 'void', {
+            name = 'The Void',
+            text = {
+                [1] = 'All Star cards',
+                [2] = 'are debuffed'
+            }
+        }, 5, 2, {}, { suit = 'Stars' }, { x = 0, y = 1 }, { min = 1, max = 10 }, G.C.SUITS['Stars'], false,
+        'six_suit_Blinds')
+    bl_eclipse:register()
+    bl_void:register()
     local init_game_object_six_suit_ref = Game.init_game_object
     function Game:init_game_object()
         local t = init_game_object_six_suit_ref(self)
@@ -527,166 +494,6 @@ function SMODS.INIT.SixSuit()
                 },
             }
         }
-        return t
-    end
-
-    --! not extensible, original function does not paginate
-    G.FUNCS.your_collection_planet_page = function(args)
-        if not args or not args.cycle_config then return end
-        for j = 1, #G.your_collection do
-            for i = #G.your_collection[j].cards, 1, -1 do
-                local c = G.your_collection[j]:remove_card(G.your_collection[j].cards[i])
-                c:remove()
-                c = nil
-            end
-        end
-
-        for j = 1, #G.your_collection do
-            for i = 1, 4 do
-                local center = G.P_CENTER_POOLS["Planet"]
-                    [i + (j - 1) * (4) + (8 * (args.cycle_config.current_option - 1))]
-                if not center then break end
-                local card = Card(G.your_collection[j].T.x + G.your_collection[j].T.w / 2, G.your_collection[j].T.y,
-                    G.CARD_W, G.CARD_H, G.P_CARDS.empty, center)
-                card:start_materialize(nil, i > 1 or j > 1)
-                G.your_collection[j]:emplace(card)
-            end
-        end
-        INIT_COLLECTION_CARD_ALERTS()
-    end
-
-    function create_UIBox_your_collection_planets()
-        local deck_tables = {}
-
-        G.your_collection = {}
-        for j = 1, 2 do
-            G.your_collection[j] = CardArea(
-                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
-                4 * G.CARD_W,
-                1 * G.CARD_H,
-                { card_limit = 4, type = 'title', highlight_limit = 0, collection = true })
-            table.insert(deck_tables,
-                {
-                    n = G.UIT.R,
-                    config = { align = "cm", padding = 0, no_fill = true },
-                    nodes = {
-                        { n = G.UIT.O, config = { object = G.your_collection[j] } }
-                    }
-                }
-            )
-        end
-
-        local planet_options = {}
-        for i = 1, math.ceil(#G.P_CENTER_POOLS.Planet / 8) do
-            table.insert(planet_options,
-                localize('k_page') .. ' ' .. tostring(i) .. '/' .. tostring(math.ceil(#G.P_CENTER_POOLS.Planet / 8)))
-        end
-
-        for j = 1, #G.your_collection do
-            for i = 1, 4 do
-                local center = G.P_CENTER_POOLS["Planet"][i + (j - 1) * (4)]
-                if not center then break end
-                local card = Card(G.your_collection[j].T.x + G.your_collection[j].T.w / 2, G.your_collection[j].T.y,
-                    G.CARD_W, G.CARD_H, nil, center)
-                card:start_materialize(nil, i > 1 or j > 1)
-                G.your_collection[j]:emplace(card)
-            end
-        end
-
-        INIT_COLLECTION_CARD_ALERTS()
-
-        local t = create_UIBox_generic_options({
-            back_func = 'your_collection',
-            contents = {
-                { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.1, r = 0.1, colour = G.C.BLACK, emboss = 0.05 }, nodes = deck_tables },
-                {
-                    n = G.UIT.R,
-                    config = { align = "cm" },
-                    nodes = {
-                        create_option_cycle({
-                            options = planet_options,
-                            w = 4.5,
-                            cycle_shoulders = true,
-                            opt_callback =
-                            'your_collection_planet_page',
-                            focus_args = { snap_to = true, nav = 'wide' },
-                            current_option = 1,
-                            colour =
-                                G.C.RED,
-                            no_pips = true
-                        })
-                    }
-                }
-            }
-        })
-        return t
-    end
-
-    -- only change is to allow for incomplete pages
-    function create_UIBox_your_collection_tarots()
-        local deck_tables = {}
-
-        G.your_collection = {}
-        for j = 1, 2 do
-            G.your_collection[j] = CardArea(
-                G.ROOM.T.x + 0.2 * G.ROOM.T.w / 2, G.ROOM.T.h,
-                (4.25 + j) * G.CARD_W,
-                1 * G.CARD_H,
-                { card_limit = 4 + j, type = 'title', highlight_limit = 0, collection = true })
-            table.insert(deck_tables,
-                {
-                    n = G.UIT.R,
-                    config = { align = "cm", padding = 0, no_fill = true },
-                    nodes = {
-                        { n = G.UIT.O, config = { object = G.your_collection[j] } }
-                    }
-                }
-            )
-        end
-
-        local tarot_options = {}
-        for i = 1, math.ceil(#G.P_CENTER_POOLS.Tarot / 11) do
-            table.insert(tarot_options,
-                localize('k_page') .. ' ' .. tostring(i) .. '/' .. tostring(math.ceil(#G.P_CENTER_POOLS.Tarot / 11)))
-        end
-
-        for j = 1, #G.your_collection do
-            for i = 1, 4 + j do
-                local center = G.P_CENTER_POOLS["Tarot"][i + (j - 1) * (5)]
-                if not center then break end
-                local card = Card(G.your_collection[j].T.x + G.your_collection[j].T.w / 2, G.your_collection[j].T.y,
-                    G.CARD_W, G.CARD_H, nil, center)
-                card:start_materialize(nil, i > 1 or j > 1)
-                G.your_collection[j]:emplace(card)
-            end
-        end
-
-        INIT_COLLECTION_CARD_ALERTS()
-
-        local t = create_UIBox_generic_options({
-            back_func = 'your_collection',
-            contents = {
-                { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.1, r = 0.1, colour = G.C.BLACK, emboss = 0.05 }, nodes = deck_tables },
-                {
-                    n = G.UIT.R,
-                    config = { align = "cm" },
-                    nodes = {
-                        create_option_cycle({
-                            options = tarot_options,
-                            w = 4.5,
-                            cycle_shoulders = true,
-                            opt_callback =
-                            'your_collection_tarot_page',
-                            focus_args = { snap_to = true, nav = 'wide' },
-                            current_option = 1,
-                            colour =
-                                G.C.RED,
-                            no_pips = true
-                        })
-                    }
-                }
-            }
-        })
         return t
     end
 end
