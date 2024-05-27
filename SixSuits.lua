@@ -5,7 +5,7 @@
 --- MOD_DESCRIPTION: This mod adds the Spectrum hand, for use with two new suits: Stars and Moons.
 --- BADGE_COLOUR: DF509F
 --- DISPLAY_NAME: Six Suits
---- VERSION: 1.0.0-PREVIEW
+--- VERSION: 1.0.1
 --- PREFIX: six
 
 ----------------------------------------------
@@ -309,7 +309,7 @@ SMODS.Consumable {
     generate_ui = 0,
     loc_txt = {
         ['en-us'] = {
-            name = 'GJ 273 c'
+            name = 'Kepler'
         }
     }
 }
@@ -317,14 +317,14 @@ SMODS.Consumable {
     set = 'Planet',
     key = 'proxima',
     config = { hand_type = spec_five.key },
-    pos = {x = 0, y = 0 },
+    pos = {x = 3, y = 0 },
     atlas = 'Tarot',
     set_card_type_badge = exoplanet,
     process_loc_text = copy_loc,
     generate_ui = 0,
     loc_txt = {
         ['en-us'] = {
-            name = 'Kepler'
+            name = 'Proxima'
         }
     }
 }
@@ -353,9 +353,9 @@ SMODS.Consumable {
     key = 'moon_q',
     config = { suit_conv = moon_suit.key, max_highlighted = 3 },
     atlas = 'Tarot',
-    pos = { x = 2, y = 1 },
+    pos = { x = 1, y = 1 },
     loc_txt = {
-        name = 'The Star?',
+        name = 'The Moon?',
     },
     process_loc_text = copy_loc,
     loc_vars = function(self)
@@ -523,7 +523,7 @@ SMODS.Joker {
             name = 'Star Ruby',
             text = {
                 '{C:green}#1# in #2#{} chance for',
-                ('played cards with{C:%s}Star{} suit'):format(star_suit.key:lower()),
+                ('played cards with {C:%s}Star{} suit'):format(star_suit.key:lower()),
                 'to create a random {C:spectral}Spectral{}',
                 'card when scored',
             }
@@ -572,7 +572,7 @@ SMODS.Joker {
             name = 'Rainbow Moonstone',
             text = {
                 '{C:green}#1# in #2#{} chance for',
-                ('played cards with{C:%s}Moon{} suit'):format(moon_suit.key:lower()),
+                ('played cards with {C:%s}Moon{} suit'):format(moon_suit.key:lower()),
                 'to become {C:attention}Glass{} Cards'
             }
         }
@@ -665,10 +665,10 @@ SMODS.Joker {
         type = base_spectrum.key,
     },
     atlas = 'Joker',
-    pos = { x = 2, y = 0 },
+    pos = { x = 2, y = 1 },
     loc_txt = {
         ['en-us'] = {
-            name = 'Star Ruby',
+            name = 'Wicked Joker',
             text = {
                 '{C:chips}+#1#{} Chips if played',
                 'hand contains',
