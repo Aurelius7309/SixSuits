@@ -5,7 +5,7 @@
 --- MOD_DESCRIPTION: This mod adds the Spectrum hand, for use with two new suits: Stars and Moons.
 --- BADGE_COLOUR: DF509F
 --- DISPLAY_NAME: Six Suits
---- VERSION: 1.0.1
+--- VERSION: 1.0.2
 --- PREFIX: six
 
 ----------------------------------------------
