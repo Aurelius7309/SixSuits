@@ -156,16 +156,18 @@ local str_spectrum = SMODS.PokerHand {
         local str, spec = parts._straight, parts[base_spectrum.key]
         local ret = {}
         if next(str) and next(spec) then
+            local hand = {}
             for _, v in ipairs(spec[1]) do
-                ret[#ret + 1] = v
+                hand[#hand + 1] = v
             end
             for _, v in ipairs(str[1]) do
                 local in_straight = nil
                 for _, vv in ipairs(spec[1]) do
                     if vv == v then in_straight = true end
                 end
-                if not in_straight then ret[#ret + 1] = v end
+                if not in_straight then hand[#hand + 1] = v end
             end
+            table.insert(ret, hand)
         end
         return ret
     end,
@@ -205,8 +207,9 @@ local spec_house = SMODS.PokerHand {
         }
     },
     composite = function(parts)
-        local fh_hand = {}
+        local ret = {}
         if next(parts._3) and next(parts._2) and next(parts[base_spectrum.key]) then
+            local fh_hand = {}
             local fh_3 = parts._3[1]
             local fh_2 = parts._2[1]
             for i = 1, #fh_3 do
@@ -216,7 +219,7 @@ local spec_house = SMODS.PokerHand {
                 fh_hand[#fh_hand + 1] = fh_2[i]
             end
         end
-        return fh_hand
+        return ret
     end
 }
 local spec_five = SMODS.PokerHand {
@@ -459,11 +462,12 @@ end
 -- Jokers
 SMODS.Joker {
     key = 'envious_joker',
+    effect = 'Suit Mult',
     config = {
         extra = {
             s_mult = 3,
-            suit = star_suit.key
-        }
+            suit = star_suit.key,
+        },
     },
     atlas = 'Joker',
     pos = { x = 0, y = 0 },
@@ -486,11 +490,12 @@ SMODS.Joker {
 }
 SMODS.Joker {
     key = 'slothful_joker',
+    effect = 'Suit Mult',
     config = {
         extra = {
             s_mult = 3,
-            suit = moon_suit.key
-        }
+            suit = moon_suit.key,
+        },
     },
     atlas = 'Joker',
     pos = { x = 1, y = 0 },
