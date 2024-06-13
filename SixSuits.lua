@@ -218,6 +218,7 @@ local spec_house = SMODS.PokerHand {
             for i = 1, #fh_2 do
                 fh_hand[#fh_hand + 1] = fh_2[i]
             end
+            table.insert(ret, fh_hand)
         end
         return ret
     end
