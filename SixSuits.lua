@@ -5,23 +5,12 @@
 --- MOD_DESCRIPTION: This mod adds the Spectrum hand, for use with two new suits: Stars and Moons.
 --- BADGE_COLOUR: DF509F
 --- DISPLAY_NAME: Six Suits
---- VERSION: 1.0.2
+--- VERSION: 1.0.3
 --- PREFIX: six
 
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
-function SMODS.current_mod.process_loc_text()
-    local loc_txt = {
-        ['en-us'] = {
-            k_glass = 'Glass!',
-            k_exoplanet = 'Exoplanet',
-        }
-    }
-    for k, v in pairs(loc_txt['en-us']) do
-        SMODS.process_loc_text(G.localization.misc.dictionary, k, loc_txt, k)
-    end
-end
 --- Sprites
 SMODS.Atlas { key = 'lc_cards', path = '8BitDeck.png', px = 71, py = 95 }
 SMODS.Atlas { key = 'hc_cards', path = '8BitDeck_opt2.png', px = 71, py = 95 }
@@ -44,12 +33,6 @@ local moon_suit = SMODS.Suit {
     ui_pos = { x = 1, y = 0 },
     hc_colour = HEX('696076'),
     lc_colour = HEX('696076'),
-    loc_txt = {
-        ['en-us'] = {
-            singular = 'Moon',
-            plural = 'Moons',
-        }
-    }
 }
 local star_suit = SMODS.Suit {
     key = 'Stars',
@@ -62,38 +45,11 @@ local star_suit = SMODS.Suit {
     ui_pos = { x = 0, y = 0 },
     hc_colour = HEX('DF509F'),
     lc_colour = HEX('DF509F'),
-    loc_txt = {
-        ['en-us'] = {
-            singular = 'Star',
-            plural = 'Stars',
-        }
-    }
 }
 
--- Poker hands
-local base_spectrum = SMODS.PokerHand {
-    key = 'Spectrum',
-    above_hand = 'Two Pair',
-    chips = 20,
-    mult = 3,
-    l_chips = 15,
-    l_mult = 3,
-    example = {
-        { 'H_2',    true },
-        { 'C_7',    true },
-        { 'STAR_3', true },
-        { 'MOON_5', true },
-        { 'D_K',    true },
-    },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Spectrum',
-            description = {
-                '5 cards with different suits'
-            }
-        }
-    },
-    atomic_part = function(hand)
+SMODS.PokerHandPart {
+    key = 'spectrum',
+    func = function(hand)
         local suits = {}
         for _, v in ipairs(SMODS.Suit.obj_buffer) do
             suits[v] = 0
@@ -124,6 +80,25 @@ local base_spectrum = SMODS.PokerHand {
         return (num_suits >= 5) and { hand } or {}
     end
 }
+-- Poker hands
+local base_spectrum = SMODS.PokerHand {
+    key = 'Spectrum',
+    above_hand = 'Two Pair',
+    chips = 20,
+    mult = 3,
+    l_chips = 15,
+    l_mult = 3,
+    example = {
+        { 'H_2',    true },
+        { 'C_7',    true },
+        { 'STAR_3', true },
+        { 'MOON_5', true },
+        { 'D_K',    true },
+    },
+    evaluate = function(parts)
+        return parts.six_spectrum
+    end
+}
 local str_spectrum = SMODS.PokerHand {
     key = 'Straight Spectrum',
     above_hand = 'Four of a Kind',
@@ -138,38 +113,9 @@ local str_spectrum = SMODS.PokerHand {
         { 'STAR_9', true },
         { 'H_8',    true }
     },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Straight Spectrum',
-            description = {
-                '5 cards in a row (consecutive ranks) with',
-                'each card having a different suit'
-            },
-            extra = 'Royal Spectrum',
-        }
-    },
-    process_loc_text = function(self)
-        SMODS.PokerHand.process_loc_text(self)
-        SMODS.process_loc_text(G.localization.misc.poker_hands, self.key..'_2', self.loc_txt, 'extra')
-    end,
-    composite = function(parts)
-        local str, spec = parts._straight, parts[base_spectrum.key]
-        local ret = {}
-        if next(str) and next(spec) then
-            local hand = {}
-            for _, v in ipairs(spec[1]) do
-                hand[#hand + 1] = v
-            end
-            for _, v in ipairs(str[1]) do
-                local in_straight = nil
-                for _, vv in ipairs(spec[1]) do
-                    if vv == v then in_straight = true end
-                end
-                if not in_straight then hand[#hand + 1] = v end
-            end
-            table.insert(ret, hand)
-        end
-        return ret
+    evaluate = function(parts)
+        if not next(parts.six_spectrum) or not next(parts._straight) then return {} end
+        return { SMODS.merge_lists { parts.six_spectrum[1], parts._straight[1] }}
     end,
     modify_display_text = function(self, _cards, scoring_hand)
         local royal = true
@@ -197,31 +143,10 @@ local spec_house = SMODS.PokerHand {
         { 'D_8',    true },
         { 'H_8',    true }
     },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Spectrum House',
-            description = {
-                'A Three of a Kind and a Pair with',
-                'each card having a different suit'
-            }
-        }
-    },
-    composite = function(parts)
-        local ret = {}
-        if next(parts._3) and next(parts._2) and next(parts[base_spectrum.key]) then
-            local fh_hand = {}
-            local fh_3 = parts._3[1]
-            local fh_2 = parts._2[1]
-            for i = 1, #fh_3 do
-                fh_hand[#fh_hand + 1] = fh_3[i]
-            end
-            for i = 1, #fh_2 do
-                fh_hand[#fh_hand + 1] = fh_2[i]
-            end
-            table.insert(ret, fh_hand)
-        end
-        return ret
-    end
+    evaluate = function(parts)
+        if #parts._3 < 1 or #parts._2 < 2 or not next(parts.six_spectrum) then return {} end
+        return { SMODS.merge_lists { parts._fh[1], parts.six_spectrum[1]}}
+    end,
 }
 local spec_five = SMODS.PokerHand {
     key = 'Spectrum Five',
@@ -238,38 +163,15 @@ local spec_five = SMODS.PokerHand {
         { 'H_7',    true },
         { 'C_7',    true }
     },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Spectrum Five',
-            description = {
-                '5 cards with the same rank,',
-                'each with a different suit'
-            },
-        }
-    },
-    composite = function(parts)
-        local ret = {}
-        if next(parts._5) and next(parts[base_spectrum.key]) then
-            ret = parts._5
-        end
-        return ret
-    end
+    evaluate = function(parts)
+        if not next(parts._5 or not next(parts.six_spectrum)) then return {} end
+        return { SMODS.merge_lists { parts._5[1], parts.six_spectrum[1] }}
+    end,
 }
 
 -- Consumables
 local exoplanet = function(self, card, badges)
     badges[#badges + 1] = create_badge(localize('k_exoplanet'), get_type_colour(self or card.config, card), nil, 1.2)
-end
-local copy_loc = function(self)
-    local copy_target = ''
-    if self.set == 'Planet' then copy_target = 'c_mercury' end
-    if self.config.suit_conv then copy_target = 'c_star' end
-    if copy_target ~= '' then
-        local target_text = G.localization.descriptions[self.set][copy_target].text
-        SMODS.Consumable.process_loc_text(self)
-        G.localization.descriptions[self.set][self.key].text = target_text
-    end
-    
 end
 SMODS.Consumable {
     set = 'Planet',
@@ -278,13 +180,7 @@ SMODS.Consumable {
     pos = {x = 0, y = 0 },
     atlas = 'Tarot',
     set_card_type_badge = exoplanet,
-    process_loc_text = copy_loc,
     generate_ui = 0,
-    loc_txt = {
-        ['en-us'] = {
-            name = 'GJ 273 c'
-        }
-    }
 }
 SMODS.Consumable {
     set = 'Planet',
@@ -293,13 +189,7 @@ SMODS.Consumable {
     pos = {x = 1, y = 0 },
     atlas = 'Tarot',
     set_card_type_badge = exoplanet,
-    process_loc_text = copy_loc,
     generate_ui = 0,
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Trappist'
-        }
-    }
 }
 SMODS.Consumable {
     set = 'Planet',
@@ -309,13 +199,7 @@ SMODS.Consumable {
     softlock = true,
     atlas = 'Tarot',
     set_card_type_badge = exoplanet,
-    process_loc_text = copy_loc,
     generate_ui = 0,
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Kepler'
-        }
-    }
 }
 SMODS.Consumable {
     set = 'Planet',
@@ -324,13 +208,7 @@ SMODS.Consumable {
     pos = {x = 3, y = 0 },
     atlas = 'Tarot',
     set_card_type_badge = exoplanet,
-    process_loc_text = copy_loc,
     generate_ui = 0,
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Proxima'
-        }
-    }
 }
 SMODS.Consumable {
     set = 'Tarot',
@@ -338,10 +216,6 @@ SMODS.Consumable {
     config = { suit_conv = star_suit.key, max_highlighted = 3 },
     atlas = 'Tarot',
     pos = { x = 2, y = 1 },
-    loc_txt = {
-        name = 'The Star?',
-    },
-    process_loc_text = copy_loc,
     loc_vars = function(self)
         return {
             vars = {
@@ -358,10 +232,6 @@ SMODS.Consumable {
     config = { suit_conv = moon_suit.key, max_highlighted = 3 },
     atlas = 'Tarot',
     pos = { x = 1, y = 1 },
-    loc_txt = {
-        name = 'The Moon?',
-    },
-    process_loc_text = copy_loc,
     loc_vars = function(self)
         return {
             vars = {
@@ -378,17 +248,6 @@ SMODS.Consumable {
     atlas = 'Tarot',
     pos = { x = 9, y = 2 },
     cost = 4,
-    loc_txt = {
-        ['en-us'] = {
-            name = 'The Fool?',
-            text = {
-                'Creates the last',
-                '{C:spectral}Spectral{} card',
-                'used during this run',
-                '{s:0.8,C:spectral}The Fool?{s:0.8} excluded'
-            }
-        }
-    },
     use = function(self, card, area, copier)
         local used_tarot = copier or card
         G.E_MANAGER:add_event(Event({
@@ -472,16 +331,6 @@ SMODS.Joker {
     },
     atlas = 'Joker',
     pos = { x = 0, y = 0 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Envious Joker',
-            text = {
-                'Played cards with',
-                ('{C:%s}#2#{} suit give'):format(star_suit.key:lower()),
-                '{C:mult}+#1#{} Mult when scored'
-            }
-        }
-    },
     cost = 5,
     loc_vars = function(self, info_queue, card)
         return {
@@ -500,16 +349,6 @@ SMODS.Joker {
     },
     atlas = 'Joker',
     pos = { x = 1, y = 0 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Slothful Joker',
-            text = {
-                'Played cards with',
-                ('{C:%s}#2#{} suit give'):format(moon_suit.key:lower()),
-                '{C:mult}+#1#{} Mult when scored'
-            }
-        }
-    },
     cost = 5,
     loc_vars = function(self, info_queue, card)
         return {
@@ -524,17 +363,6 @@ SMODS.Joker {
     },
     atlas = 'Joker',
     pos = { x = 2, y = 0 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Star Ruby',
-            text = {
-                '{C:green}#1# in #2#{} chance for',
-                ('played cards with {C:%s}Star{} suit'):format(star_suit.key:lower()),
-                'to create a random {C:spectral}Spectral{}',
-                'card when scored',
-            }
-        }
-    },
     rarity = 2,
     cost = 7,
     loc_vars = function(self, info_queue, card)
@@ -573,16 +401,6 @@ SMODS.Joker {
     },
     atlas = 'Joker',
     pos = { x = 3, y = 0 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Rainbow Moonstone',
-            text = {
-                '{C:green}#1# in #2#{} chance for',
-                ('played cards with {C:%s}Moon{} suit'):format(moon_suit.key:lower()),
-                'to become {C:attention}Glass{} Cards'
-            }
-        }
-    },
     rarity = 2,
     cost = 7,
     loc_vars = function(self, info_queue, card)
@@ -623,14 +441,6 @@ SMODS.Joker {
     },
     atlas = 'Joker',
     pos = { x = 0, y = 1 },
-    loc_txt = {
-        name = 'The Clan',
-            text = {
-                '{X:mult,C:white} X#1# {} Mult if played',
-                'hand contains',
-                'a {C:attention}#2#'
-            }
-    },
     rarity = 3,
     cost = 8,
     loc_vars = function(self, info_queue, card)
@@ -647,16 +457,6 @@ SMODS.Joker {
     },
     atlas = 'Joker',
     pos = { x = 1, y = 1 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Manic Joker',
-            text = {
-                '{C:red}+#1#{} Mult if played',
-                'hand contains',
-                'a {C:attention}#2#'
-            }
-        }
-    },
     cost = 4,
     loc_vars = function(self, info_queue, card)
         return {
@@ -672,16 +472,6 @@ SMODS.Joker {
     },
     atlas = 'Joker',
     pos = { x = 2, y = 1 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'Wicked Joker',
-            text = {
-                '{C:chips}+#1#{} Chips if played',
-                'hand contains',
-                'a {C:attention}#2#'
-            }
-        }
-    },
     cost = 4,
     loc_vars = function(self, info_queue, card)
         return {
@@ -698,15 +488,6 @@ SMODS.Blind {
     debuff = { suit = star_suit.key },
     atlas = 'Blind',
     pos = { x = 0, y = 0 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'The Eclipse',
-            text = {
-                'All Star cards',
-                'are debuffed',
-            }
-        }
-    }
 }
 SMODS.Blind {
     key = 'void',
@@ -715,15 +496,6 @@ SMODS.Blind {
     debuff = { suit = moon_suit.key },
     atlas = 'Blind',
     pos = { x = 0, y = 1 },
-    loc_txt = {
-        ['en-us'] = {
-            name = 'The Void',
-            text = {
-                'All Moon cards',
-                'are debuffed',
-            }
-        }
-    }
 }
 
     
