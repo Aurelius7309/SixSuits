@@ -16,18 +16,18 @@ return {
 			["six_Spectrum Five"] = "Spectrum Five",
 		},
 		["poker_hand_descriptions"] = {
-			["h_six_Spectrum Five"] = {
+			["six_Spectrum Five"] = {
 				"5 cards with the same rank,",
 				"each with a different suit",
 			},
-			["h_six_Spectrum"] = {
+			["six_Spectrum"] = {
 				"5 cards with different suits",
 			},
-			["h_six_Straight Spectrum"] = {
+			["six_Straight Spectrum"] = {
 				"5 cards in a row (consecutive ranks) with",
 				"each card having a different suit",
 			},
-			["h_six_Spectrum House"] = {
+			["six_Spectrum House"] = {
 				"A Three of a Kind and a Pair with",
 				"each card having a different suit",
 			},

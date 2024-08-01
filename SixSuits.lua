@@ -83,7 +83,6 @@ SMODS.PokerHandPart {
 -- Poker hands
 local base_spectrum = SMODS.PokerHand {
     key = 'Spectrum',
-    above_hand = 'Two Pair',
     chips = 20,
     mult = 3,
     l_chips = 15,
@@ -101,7 +100,6 @@ local base_spectrum = SMODS.PokerHand {
 }
 local str_spectrum = SMODS.PokerHand {
     key = 'Straight Spectrum',
-    above_hand = 'Four of a Kind',
     chips = 60,
     mult = 6,
     l_chips = 35,
@@ -115,7 +113,7 @@ local str_spectrum = SMODS.PokerHand {
     },
     evaluate = function(parts)
         if not next(parts.six_spectrum) or not next(parts._straight) then return {} end
-        return { SMODS.merge_lists { parts.six_spectrum[1], parts._straight[1] }}
+        return { SMODS.merge_lists (parts.six_spectrum, parts._straight) }
     end,
     modify_display_text = function(self, _cards, scoring_hand)
         local royal = true
@@ -130,7 +128,7 @@ local str_spectrum = SMODS.PokerHand {
 }
 local spec_house = SMODS.PokerHand {
     key = 'Spectrum House',
-    above_hand = 'Straight Flush',
+    --above_hand = 'Straight Flush',
     visible = false,
     chips = 80,
     mult = 7,
@@ -145,12 +143,12 @@ local spec_house = SMODS.PokerHand {
     },
     evaluate = function(parts)
         if #parts._3 < 1 or #parts._2 < 2 or not next(parts.six_spectrum) then return {} end
-        return { SMODS.merge_lists { parts._fh[1], parts.six_spectrum[1]}}
+        return { SMODS.merge_lists (parts._all_pairs, parts.six_spectrum) }
     end,
 }
 local spec_five = SMODS.PokerHand {
     key = 'Spectrum Five',
-    above_hand = 'Flush House',
+    --above_hand = 'Flush House',
     visible = false,
     chips = 120,
     mult = 14,
@@ -165,7 +163,7 @@ local spec_five = SMODS.PokerHand {
     },
     evaluate = function(parts)
         if not next(parts._5 or not next(parts.six_spectrum)) then return {} end
-        return { SMODS.merge_lists { parts._5[1], parts.six_spectrum[1] }}
+        return { SMODS.merge_lists (parts._5, parts.six_spectrum) }
     end,
 }
 
