@@ -6,6 +6,7 @@
 --- BADGE_COLOUR: DF509F
 --- DISPLAY_NAME: Six Suits
 --- VERSION: 1.0.3
+--- DEPENDENCIES: [Steamodded>=1.0.0-ALPHA-0807a]
 --- PREFIX: six
 
 ----------------------------------------------
@@ -162,7 +163,7 @@ local spec_five = SMODS.PokerHand {
         { 'C_7',    true }
     },
     evaluate = function(parts)
-        if not next(parts._5 or not next(parts.six_spectrum)) then return {} end
+        if not next(parts._5) or not next(parts.six_spectrum) then return {} end
         return { SMODS.merge_lists (parts._5, parts.six_spectrum) }
     end,
 }
