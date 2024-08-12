@@ -6,7 +6,7 @@
 --- BADGE_COLOUR: DF509F
 --- DISPLAY_NAME: Six Suits
 --- VERSION: 1.0.3
---- DEPENDENCIES: [Steamodded>=1.0.0-ALPHA-0807a]
+--- DEPENDENCIES: [Steamodded>=1.0.0~ALPHA-0812d]
 --- PREFIX: six
 
 ----------------------------------------------
