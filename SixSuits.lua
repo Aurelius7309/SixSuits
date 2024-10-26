@@ -605,7 +605,7 @@ SMODS.Blind {
     atlas = 'Blind',
     pos = { x = 0, y = 0 },
     in_pool = function(self, args)
-        return start_suit
+        return allow_suits
     end
 }
 SMODS.Blind {
@@ -616,7 +616,7 @@ SMODS.Blind {
     atlas = 'Blind',
     pos = { x = 0, y = 1 },
     in_pool = function(self, args)
-        return start_suit
+        return allow_suits
     end
 }
 
