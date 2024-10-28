@@ -48,6 +48,7 @@ SMODS.Atlas { key = 'Blind', path = 'BlindChips.png', px = 34, py = 34, frames =
 SMODS.Atlas { key = 'modicon', path = 'ui_assets.png', px = 18, py = 18 }
 SMODS.Atlas { key = 'Decks', path = 'Decks.png', px = 71, py = 95 }
 
+local six_suits_mod = SMODS.current_mod
 local function allow_suits(self, args)
     if args and args.initial_deck then
         return six_suits_mod.config.allow_all_suits
@@ -88,7 +89,7 @@ local str_spectrum
 local spec_house
 local spec_five
 
-if SMODS.findModByID("Bunco") then
+if SMODS.findModByID("Bunco") and six_suits_mod.config.allow_all_suits then
     base_spectrum = SMODS.PokerHand:take_ownership('bunc_Spectrum', {
         chips = 20,
         mult = 3,
@@ -142,7 +143,7 @@ if SMODS.findModByID("Bunco") then
             { 'C_7',    true }
         },
     })
-else
+elseif not SMODS.findModByID("Bunco") then
     SMODS.PokerHandPart {
         key = 'spectrum',
         func = function(hand)
