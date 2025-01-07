@@ -1,16 +1,4 @@
---- STEAMODDED HEADER
---- MOD_NAME: Six Suits
---- MOD_ID: SixSuits
---- MOD_AUTHOR: [Aure, CrimsonHeart]
---- MOD_DESCRIPTION: This mod adds the Spectrum hand, for use with two new suits: Stars and Moons.
---- BADGE_COLOUR: DF509F
---- DISPLAY_NAME: Six Suits
---- VERSION: 1.0.3
---- DEPENDENCIES: [Steamodded>=1.0.0~ALPHA-0812d]
---- PREFIX: six
 
-----------------------------------------------
-------------MOD CODE -------------------------
 
 --- Sprites
 SMODS.Atlas { key = 'lc_cards', path = '8BitDeck.png', px = 71, py = 95 }
@@ -238,6 +226,7 @@ SMODS.Consumable {
                 localize(self.config.suit_conv, 'suits_plural'),
                 colours = { G.C.SUITS[self.config.suit_conv] },
             },
+            background_colour = G.C.BLACK
         }
     end
 }
@@ -498,5 +487,8 @@ SMODS.Blind {
 }
 
     
+SMODS.current_mod.description_loc_vars = function()
+    return { background_colour = G.C.CLEAR, text_colour = G.C.WHITE, scale = 1.2 }
+end
 ----------------------------------------------
 ------------MOD CODE END---------------------

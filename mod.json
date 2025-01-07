@@ -1,0 +1,13 @@
+{
+    "id": "SixSuits",
+    "name": "Six Suits",
+    "author": ["Aure", "Crimson Heart"],
+    "description": "This mod introduces the Spectrum hand, for use with two new suits: Stars and Moons.",
+    "badge_colour": "DF509F",
+    "version": "1.1.0",
+    "dependencies": [
+        "Steamodded (>=1~)"
+    ],
+    "prefix": "six",
+    "main_file": "SixSuits.lua"
+}

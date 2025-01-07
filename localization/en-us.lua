@@ -180,5 +180,14 @@ return {
 				},
 			},
 		},
+		["Mod"] = {
+			["SixSuits"] = {
+				["name"] = "Six Suits",
+				["text"] = {
+					"This mod introduces the {E:1,C:dark_edition}Spectrum{} hand,",
+					"for use with two new suits: {C:six_stars,T:c_six_star_q}Stars{} and {C:six_moons,T:c_six_moon_q}Moons{}."
+				}
+			}
+		}
 	},
 }
