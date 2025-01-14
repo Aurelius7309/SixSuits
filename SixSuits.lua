@@ -160,8 +160,8 @@ else
         example = {
             { 'H_2',    true },
             { 'C_7',    true },
-            { 'STAR_3', true },
-            { 'MOON_5', true },
+            { 'six_STAR_3', true },
+            { 'six_MOON_5', true },
             { 'D_K',    true },
         },
         evaluate = function(parts)
@@ -176,9 +176,9 @@ else
         l_mult = 2,
         example = {
             { 'S_Q',    true },
-            { 'MOON_J', true },
+            { 'six_MOON_J', true },
             { 'C_T',    true },
-            { 'STAR_9', true },
+            { 'six_STAR_9', true },
             { 'H_8',    true }
         },
         evaluate = function(parts)
@@ -206,7 +206,7 @@ else
         l_mult = 4,
         example = {
             { 'S_Q',    true },
-            { 'MOON_Q', true },
+            { 'six_MOON_Q', true },
             { 'C_Q',    true },
             { 'D_8',    true },
             { 'H_8',    true }
@@ -227,7 +227,7 @@ else
         example = {
             { 'S_7',    true },
             { 'D_7', true },
-            { 'STAR_7',    true },
+            { 'six_STAR_7',    true },
             { 'H_7',    true },
             { 'C_7',    true }
         },
