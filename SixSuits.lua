@@ -1,30 +1,4 @@
 
-
-local BackApply_to_run_ref = Back.apply_to_run
-function Back.apply_to_run(self)
-    BackApply_to_run_ref(self)
-
-    if self.effect.config.night_Deck then
-        G.E_MANAGER:add_event(Event({
-            func = function()
-
-                for i = #G.playing_cards, 1, -1 do
-                    if i <= 13 then
-                        G.playing_cards[i]:change_suit("six_Moons")
-                    elseif i >= 14 and i <= 26 then
-                        G.playing_cards[i]:change_suit("six_Stars")
-                    elseif i >= 27 then
-                        G.playing_cards[i]:start_dissolve(nil, true)
-                    end
-                end
-
-                G.GAME.starting_params.night_Deck = true
-                return true
-            end
-        }))
-    end
-end
-
 --- Sprites
 SMODS.Atlas { key = 'lc_cards', path = '8BitDeck.png', px = 71, py = 95 }
 SMODS.Atlas { key = 'hc_cards', path = '8BitDeck_opt2.png', px = 71, py = 95 }
@@ -35,6 +9,7 @@ SMODS.Atlas { key = 'Tarot', path = 'Tarots.png', px = 71, py = 95 }
 SMODS.Atlas { key = 'Blind', path = 'BlindChips.png', px = 34, py = 34, frames = 21, atlas_table = 'ANIMATION_ATLAS' }
 SMODS.Atlas { key = 'modicon', path = 'ui_assets.png', px = 18, py = 18 }
 SMODS.Atlas { key = 'Decks', path = 'Decks.png', px = 71, py = 95 }
+SMODS.Atlas { key = 'Sleeves', path = 'Sleeves.png', px = 73, py = 95 }
 
 local six_suits_mod = SMODS.current_mod
 local function allow_suits(self, args)
@@ -77,61 +52,71 @@ local str_spectrum
 local spec_house
 local spec_five
 
-if SMODS.findModByID("Bunco") and six_suits_mod.config.allow_all_suits then
-    base_spectrum = SMODS.PokerHand:take_ownership('bunc_Spectrum', {
-        chips = 20,
-        mult = 3,
-        l_chips = 15,
-        l_mult = 3,
-        visible = true,
-        example = {
-            { 'H_2',    true },
-            { 'C_7',    true },
-            { 'STAR_3', true },
-            { 'MOON_5', true },
-            { 'D_K',    true },
-        },
-    })
-    str_spectrum = SMODS.PokerHand:take_ownership('bunc_Straight Spectrum', {
-        chips = 60,
-        mult = 6,
-        l_chips = 35,
-        l_mult = 2,
-        example = {
-            { 'S_Q',    true },
-            { 'MOON_J', true },
-            { 'C_T',    true },
-            { 'STAR_9', true },
-            { 'H_8',    true }
-        },
-    })
-    spec_house = SMODS.PokerHand:take_ownership('bunc_Spectrum House', {
-        chips = 80,
-        mult = 7,
-        l_chips = 35,
-        l_mult = 4,
-        example = {
-            { 'S_Q',    true },
-            { 'MOON_Q', true },
-            { 'C_Q',    true },
-            { 'D_8',    true },
-            { 'H_8',    true }
-        },
-    })
-    spec_five = SMODS.PokerHand:take_ownership('bunc_Spectrum Five', {
-        chips = 120,
-        mult = 14,
-        l_chips = 40,
-        l_mult = 3,
-        example = {
-            { 'S_7',    true },
-            { 'D_7', true },
-            { 'STAR_7',    true },
-            { 'H_7',    true },
-            { 'C_7',    true }
-        },
-    })
-elseif not SMODS.findModByID("Bunco") then
+local bunco = next(SMODS.find_mod('Bunco'))
+local framework = next(SMODS.find_mod('SpectrumFramework'))
+
+if framework or bunco then
+    if six_suits_mod.config.allow_all_suits then
+        base_spectrum = SMODS.PokerHand:take_ownership(framework and 'spectrum_Spectrum' or bunco and 'bunc_Spectrum', {
+            chips = 20,
+            mult = 3,
+            l_chips = 15,
+            l_mult = 3,
+            visible = true,
+            example = {
+                { 'six_STAR_2',    true },
+                { 'D_7',    true },
+                { 'C_3', true },
+                { bunco and 'bunc_FLEURON_5' or 'S_5', true },
+                { 'H_K',    true },
+            },
+        })
+        str_spectrum = SMODS.PokerHand:take_ownership(framework and 'spectrum_Straight Spectrum' or bunco and 'bunc_Straight Spectrum', {
+            chips = 60,
+            mult = 6,
+            l_chips = 35,
+            l_mult = 2,
+            example = {
+                { 'S_Q',    true },
+                { bunco and 'bunc_FLEURON_J' or 'six_STAR_J', true },
+                { 'six_MOON_T',    true },
+                { 'D_9', true },
+                { 'H_8',    true }
+            },
+        })
+        spec_house = SMODS.PokerHand:take_ownership(framework and 'spectrum_Spectrum House' or bunco and 'bunc_Spectrum House', {
+            chips = 80,
+            mult = 7,
+            l_chips = 35,
+            l_mult = 4,
+            example = {
+                { 'S_Q',    true },
+                { bunco and 'bunc_FLEURON_Q' or 'H_Q', true },
+                { 'C_Q',    true },
+                { 'six_STAR_8',    true },
+                { 'six_MOON_8',    true }
+            },
+        })
+        spec_five = SMODS.PokerHand:take_ownership(framework and 'spectrum_Spectrum Five' or bunco and 'bunc_Spectrum Five', {
+            chips = 120,
+            mult = 14,
+            l_chips = 40,
+            l_mult = 3,
+            example = {
+                { 'six_STAR_7',    true },
+                { 'D_7', true },
+                { bunco and 'bunc_FLEURON_7' or 'S_7', true },
+                { 'H_7',    true },
+                { 'C_7',    true }
+            },
+        })
+    else
+        base_spectrum = SMODS.PokerHands[framework and 'spectrum_Spectrum' or bunco and 'bunc_Spectrum']
+        str_spectrum = SMODS.PokerHands[framework and 'spectrum_Straight Spectrum' or bunco and 'bunc_Straight Spectrum']
+        spec_house = SMODS.PokerHands[framework and 'spectrum_Spectrum House' or bunco and 'bunc_Spectrum House']
+        spec_five = SMODS.PokerHands[framework and 'spectrum_Spectrum Five' or bunco and 'bunc_Spectrum Five']
+    end
+else
     SMODS.PokerHandPart {
         key = 'spectrum',
         func = function(hand)
@@ -255,23 +240,123 @@ end
 
 -- Decks
 SMODS.Back {
-    key = "night_deck",
-    loc_txt = {
-        ['en-us'] = {
-            name = "Night Deck",
-            text = {
-                'Start the run with only',
-                '{C:moons,E:1,S:1.1}Moon{} and {C:stars,E:1,S:1.1}Star{} suits.',
-            }
-        }
-    },
+    key = "night",
     atlas = 'Decks',
     pos = { x = 1, y = 0 },
-    config = {night_Deck = true},
+    apply = function(self)
+        G.E_MANAGER:add_event(Event({
+            func = function()
+
+                for i = #G.playing_cards, 1, -1 do
+                    if i <= 13 then
+                        G.playing_cards[i]:change_suit("six_Moons")
+                    elseif i >= 14 and i <= 26 then
+                        G.playing_cards[i]:change_suit("six_Stars")
+                    elseif i >= 27 then
+                        G.playing_cards[i]:start_dissolve(nil, true)
+                    end
+                end
+
+                G.GAME.starting_params.night_Deck = true
+                return true
+            end
+        }))
+    end,
 }
 
+local colourful_loc_vars = function(self) 
+    local config = G.GAME.selected_back.effect.config
+    return { vars = {config.spectrum_Xmult or self.config.spectrum_Xmult, config.spectrum_Xmult_gain or self.config.spectrum_Xmult_gain, G.GAME.probabilities.normal, config.colourful_odds or self.config.colourful_odds}}
+end
+local colourful_calculate = function(self, back, context)
+    if context.final_scoring_step and next(context.poker_hands[base_spectrum.key]) and back.effect.config.spectrum_Xmult > 1 then
+        return { x_mult = back.effect.config.spectrum_Xmult }
+    end
+    if context.before then
+        return {
+            func = function()
+                local changed = 0
+                for i = 1, #context.full_hand do
+                    if 
+                        (context.full_hand[i]:is_suit('six_Stars') or context.full_hand[i]:is_suit('six_Moons')) and
+                        pseudorandom('six_colourful') < G.GAME.probabilities.normal/back.effect.config.colourful_odds
+                    then
+                        changed = changed + 1
+                        context.full_hand[i]:juice_up(0.1,0.1)
+                        local valid_suits = {}
+                        for _,v in ipairs(SMODS.Suit:obj_list(true)) do
+                            if v.key ~= 'six_Stars' and v.key ~= 'six_Moons' and (not v.in_pool or v:in_pool({ rank = context.full_hand[i].base.value })) then
+                                table.insert(valid_suits, v.key)
+                            end
+                        end
+                        local suit = pseudorandom_element(valid_suits, pseudoseed('six_colourful_poll'))
+                        assert(SMODS.change_base(context.full_hand[i], suit))
+                    end
+                end
+                if changed > 0 then
+                    back.effect.config.spectrum_Xmult = back.effect.config.spectrum_Xmult + changed*back.effect.config.spectrum_Xmult_gain
+                    SMODS.calculate_effect({
+                        message = localize{ type = 'variable', key = 'a_xmult', vars = {back.effect.config.spectrum_Xmult}}
+                    }, G.deck.cards[1] or G.deck)
+                end
+            end
+        }
+    end
+end
+SMODS.Back {
+    key = 'colourful',
+    atlas = 'Decks',
+    pos = { x = 3, y = 0 },
+    unlocked = false,
+    unlock_condition = { spectrums = 20 },
+    check_for_unlock = function(self, args)
+        if args.type == 'win_deck' and G.GAME.hands[base_spectrum.key].played >= self.unlock_condition.spectrums then
+            return true
+        end
+    end,
+    locked_loc_vars = function(self) return { vars = {self.unlock_condition.spectrums}} end,
+    config = { colourful_odds = 4, spectrum_Xmult = 1, spectrum_Xmult_gain = 0.2 },
+    loc_vars = colourful_loc_vars,
+    calculate = colourful_calculate
+} 
+
+if CardSleeves then
+    CardSleeves.Sleeve {
+        key = 'colourful',
+        atlas = 'Sleeves',
+        pos = {x=0,y=0},
+        unlocked = false,
+        unlock_condition = { deck = 'b_six_colourful', stake = 5 },
+        config = {colourful_odds = 4, spectrum_Xmult = 1, spectrum_Xmult_gain = 0.2},
+        apply = function(self)
+            if self.get_current_deck_key() ~= 'b_six_colourful' then
+                G.GAME.selected_back.effect.config.spectrum_Xmult = self.config.spectrum_Xmult
+                G.GAME.selected_back.effect.config.spectrum_Xmult_gain = self.config.spectrum_Xmult_gain
+                G.GAME.selected_back.effect.config.colourful_odds = self.config.colourful_odds
+            end
+        end,
+        loc_vars = function(self)
+            if self.get_current_deck_key() ~= 'b_six_colourful' then
+                return colourful_loc_vars(self)
+            else
+                return { key = self.key..'_alt', vars = {}}
+            end
+        end,
+        trigger_effect = function(self, context)
+            if self.get_current_deck_key() ~= 'b_six_colourful' then
+                return colourful_calculate(self, G.GAME.selected_back, context)
+            end
+            if context.repetition and context.cardarea == G.play and next(context.poker_hands[base_spectrum.key]) then
+                return {
+                    message = localize('k_again_ex'),
+                    repetitions = 1,
+                }
+            end
+        end
+    }
+end
 -- Consumables
-if not SMODS.findModByID("Bunco") then
+if not bunco and not framework then
     local exoplanet = function(self, card, badges)
         badges[#badges + 1] = create_badge(localize('k_exoplanet'), get_type_colour(self or card.config, card), nil, 1.2)
     end
@@ -296,7 +381,7 @@ if not SMODS.findModByID("Bunco") then
     SMODS.Consumable {
         set = 'Planet',
         key = 'kepler',
-        config = { hand_type = spec_house.key },
+        config = { hand_type = spec_house.key, softlock = true },
         pos = { x = 2, y = 0 },
         softlock = true,
         atlas = 'Tarot',
@@ -306,7 +391,7 @@ if not SMODS.findModByID("Bunco") then
     SMODS.Consumable {
         set = 'Planet',
         key = 'proxima',
-        config = { hand_type = spec_five.key },
+        config = { hand_type = spec_five.key, softlock = true },
         pos = {x = 3, y = 0 },
         atlas = 'Tarot',
         set_card_type_badge = exoplanet,
@@ -537,7 +622,7 @@ SMODS.Joker {
         end
     end
 }
-if not SMODS.findModByID("Bunco") then
+if not bunco and not framework then
     SMODS.Joker {
         key = 'clan',
         config = {
@@ -586,6 +671,15 @@ if not SMODS.findModByID("Bunco") then
     }
 end
 
+local blind_in_pool = function(self, args)
+        if G.playing_cards then
+        for _,v in ipairs(G.playing_cards) do
+            if v.base.suit == self.debuff.suit then return true end
+        end
+    else
+        return SMODS.Suits[self.debuff.suit]:in_pool({initial_deck = true})
+    end
+end
 -- Blinds
 SMODS.Blind {
     key = 'eclipse',
@@ -594,9 +688,7 @@ SMODS.Blind {
     debuff = { suit = star_suit.key },
     atlas = 'Blind',
     pos = { x = 0, y = 0 },
-    in_pool = function(self, args)
-        return allow_suits
-    end
+    in_pool = blind_in_pool,
 }
 SMODS.Blind {
     key = 'void',
@@ -605,12 +697,9 @@ SMODS.Blind {
     debuff = { suit = moon_suit.key },
     atlas = 'Blind',
     pos = { x = 0, y = 1 },
-    in_pool = function(self, args)
-        return allow_suits
-    end
+    in_pool = blind_in_pool,
 }
 
-local six_suits_mod = SMODS.current_mod
     
 six_suits_mod.description_loc_vars = function()
     return { background_colour = G.C.CLEAR, text_colour = G.C.WHITE, scale = 1.2 }
@@ -625,7 +714,7 @@ six_suits_mod.config_tab = function()
                 create_toggle{ col = true, label = "", scale = 1, w = 0, shadow = true, ref_table = six_suits_mod.config, ref_value = "allow_all_suits" },
             }},
             {n = G.UIT.C, config = { align = "c", padding = 0 }, nodes = {
-                { n = G.UIT.T, config = { text = "Allow All Suits", scale = 0.45, colour = G.C.UI.TEXT_LIGHT }},
+                { n = G.UIT.T, config = { text = "Allow All Suits ", scale = 0.45, colour = G.C.UI.TEXT_LIGHT }},
             }},
         }},
     }}

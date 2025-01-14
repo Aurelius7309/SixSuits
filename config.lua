@@ -1,3 +1,3 @@
 return {
-	allow_all_suits = false,
+	allow_all_suits = true,
 }

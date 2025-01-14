@@ -54,6 +54,52 @@ return {
 				},
 			},
 		},
+		["Back"] = {
+			['b_six_night'] = {
+				["name"] = "Night Deck",
+				["text"] = {
+					"Start the run with only",
+					"{C:six_moons,E:1,S:1.1}Moon{} and {C:six_stars,E:1,S:1.1}Star{} suits.",
+				},
+			},
+			['b_six_colourful'] = {
+				["name"] = "Colourful Deck",
+				["text"] = {
+					"{X:mult,C:white} X#1# {} Mult if played hand", 
+					"contains a {C:attention}Spectrum{}",
+					"{C:green,E:1}#3# in #4#{} chance to change",
+					"the suit of each played",
+					"{C:six_moons}Moon{} or {C:six_stars}Star{} card",
+					"and gain {X:mult,C:white} X#2# {} Mult"
+				},
+			},
+		},
+		["Sleeve"] = {
+			["sleeve_six_colourful"] = {
+				["name"] = "Colourful Sleeve",
+				["text"] = {
+					"{X:mult,C:white} X#1# {} Mult if played hand", 
+					"contains a {C:attention}Spectrum{}",
+					"{C:green,E:1}#3# in #4#{} chance to change",
+					"the suit of each played",
+					"{C:six_moons}Moon{} or {C:six_stars}Star{} card",
+					"and gain {X:mult,C:white} X#2# {} Mult"
+				},
+				["unlock"] = {
+					"Win a run after playing",
+					"a {C:attention}Spectrum{} at least",
+					"{C:attention}#1# times{} in one run"
+				}
+			},
+			["sleeve_six_colourful_alt"] = {
+				["name"] = "Colurful Sleeve",
+				["text"] = {
+					"{C:attention}Retrigger{} all played cards",
+					"if played hand",
+					"contains a {C:attention}Spectrum"
+				}
+			}
+		},
 		["Tarot"] = {
 			["c_six_star_q"] = {
 				["name"] = "The Star?",
@@ -115,7 +161,7 @@ return {
 				["name"] = "Rainbow Moonstone",
 				["text"] = {
 					"{C:green}#1# in #2#{} chance for",
-					"played cards with {C:moons}Moon{} suit",
+					"played cards with {C:six_moons}Moon{} suit",
 					"to become {C:attention}Glass{} Cards",
 				},
 			},
@@ -131,7 +177,7 @@ return {
 				["name"] = "Star Ruby",
 				["text"] = {
 					"{C:green}#1# in #2#{} chance for",
-					"played cards with {C:stars}Star{} suit",
+					"played cards with {C:six_stars}Star{} suit",
 					"to create a random {C:spectral}Spectral{}",
 					"card when scored",
 				},
@@ -140,7 +186,7 @@ return {
 				["name"] = "Slothful Joker",
 				["text"] = {
 					"Played cards with",
-					"{C:moons}#2#{} suit give",
+					"{C:six_moons}#2#{} suit give",
 					"{C:mult}+#1#{} Mult when scored",
 				},
 			},
@@ -185,7 +231,8 @@ return {
 				["name"] = "Six Suits",
 				["text"] = {
 					"This mod introduces the {E:1,C:dark_edition}Spectrum{} hand,",
-					"for use with two new suits: {C:six_stars,T:c_six_star_q}Stars{} and {C:six_moons,T:c_six_moon_q}Moons{}."
+					"for use with two new suits: {C:six_stars,T:c_six_star_q}Stars{} and {C:six_moons,T:c_six_moon_q}Moons{}.",
+					"Art by {E:1,C:attention}Crimson Heart{} and {E:1,C:attention}PeachFroggg{}."
 				}
 			}
 		}
