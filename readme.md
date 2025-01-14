@@ -1,12 +1,10 @@
 # SixSuits Balatro Mod
 
 ## Description
-This mod adds two new suits to the game: Stars and Moons. They work with any deck and can be toggled before starting a game, but they are not currently compatible with challenges. The new hand type Spectrum (5 cards of different suits) is introduced, including composite hands with Full Houses, Straights, and Five of a Kind. Spectrums are not affected by Four Fingers. Art by CrimsonHeart.
-NEW in version 0.4: Custom jokers to fit the new suits have been introduced!
+This mod adds two new suits to the game: Stars and Moons. They work with any deck and can be toggled before starting a game, but they are not currently compatible with challenges. The new hand type Spectrum (5 cards of different suits) is introduced, including composite hands with Full Houses, Straights, and Five of a Kind. Art by [CrimsonHeart](https://linktr.ee/XenoCHeart) and [PeachFroggg](https://www.tumblr.com/peachfrogdraws).
 
 ## How to install
-This mod requires the [Steamodded Mod loader](https://github.com/Steamopollys/Steamodded) at version 0.9.2 or higher. To install, download the zip file of the newest release and unzip it in the `C:\Users\USER\AppData\Roaming\Balatro\Mods` directory. Launch the game, and you should be good to go!
-**For a 1.0.0 compatible version, download the source code from the repository directly [here](https://github.com/Aurelius7309/SixSuits/archive/refs/heads/master.zip)** 
+This mod requires the latest alpha version of Steamodded. Install it as described [here](https://github.com/Steamopollys/Steamodded/wiki), download the latest release of this mod and add it to your mods folder.
 	
 ## Contributions
 This project is open to contributions.
