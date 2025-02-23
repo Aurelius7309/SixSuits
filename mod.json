@@ -9,5 +9,6 @@
         "Steamodded (>=1.0.0~ALPHA-1314a)"
     ],
     "prefix": "six",
-    "main_file": "SixSuits.lua"
+    "main_file": "SixSuits.lua",
+    "priority": 37
 }
