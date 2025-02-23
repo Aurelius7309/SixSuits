@@ -4,7 +4,7 @@
     "author": ["Aure", "Crimson Heart"],
     "description": "This mod introduces the Spectrum hand, for use with two new suits: Stars and Moons.",
     "badge_colour": "DF509F",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "dependencies": [
         "Steamodded (>=1.0.0~ALPHA-1314a)"
     ],
